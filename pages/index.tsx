@@ -6,7 +6,10 @@ import styles from '../styles/Home.module.css'
 import { ethers } from "ethers"
 import Web3Modal from "web3modal"
 import { providerOptions } from "../utils/providerOptions"
-import { Web3Provider } from 'walletlink/dist/provider/Web3Provider';
+import { toHex } from '../utils/toHex'
+import { networkParams } from '../utils/networkParams'
+import { truncateAddress } from '../utils/truncateAddress'
+import { Web3Provider } from 'walletlink/dist/provider/Web3Provider'
 
 const Home: NextPage = () => {
   const [provider, setProvider] = useState()
@@ -16,7 +19,7 @@ const Home: NextPage = () => {
   const [signature, setSignature] = useState("")
   const [error, setError] = useState("")
   const [chainId, setChainId] = useState<number>()
-  const [network, setNetwork] = useState()
+  const [network, setNetwork] = useState<Number>()
   const [message, setMessage] = useState("")
   const [signedMessage, setSignedMessage] = useState("")
   const [verified, setVerified] = useState()
@@ -36,6 +39,32 @@ const Home: NextPage = () => {
       }
     } catch (error) {
       setError(error as string)
+    }
+  };
+
+  const handleNetwork = (e: any) => {
+    const id = e.target.value;
+    setNetwork(Number(id));
+  };
+
+  const switchNetwork = async () => {
+    if (!library || !library.provider.request) return
+    try {
+      await library.provider.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: toHex(network) }]
+      });
+    } catch (switchError) {
+      if ((switchError as any).code === 4902) {
+        try {
+          await library.provider.request({
+            method: "wallet_addEthereumChain",
+            params: [networkParams[toHex(network)]]
+          });
+        } catch (error) {
+          setError(error as string);
+        }
+      }
     }
   };
 
@@ -81,10 +110,27 @@ const Home: NextPage = () => {
         <h1 className={styles.title}>
           Welcome to AliteDefi
         </h1>
+          <p>{`Network ID: ${chainId ? chainId : "No Network"}`}</p>
           {!account ? (
-            <button onClick={connectWallet}>Connect Wallet</button>
+            <div className="accountManagement">
+              <button onClick={connectWallet}>Connect Wallet</button>
+            </div>
           ) : (
-            <button onClick={disconnect}>Disconnect</button>
+            <div>
+              <div className="networkHandler">
+              <select placeholder="Select network" onChange={handleNetwork}>
+                <option value="3">Ropsten</option>
+                <option value="4">Rinkeby</option>
+                <option value="42">Kovan</option>
+                <option value="1666600000">Harmony</option>
+                <option value="137">Polygon</option>
+              </select>
+              <button onClick={switchNetwork}>Switch Network</button>
+              </div>
+              <div className="accountManagement">
+                <button onClick={disconnect}>Disconnect</button>
+              </div>
+            </div>
           )}
       </main>
 
