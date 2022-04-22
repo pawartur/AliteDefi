@@ -1,9 +1,74 @@
 import type { NextPage } from 'next'
+import { useEffect, useState } from "react";
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import { ethers } from "ethers"
+import Web3Modal from "web3modal"
+import { providerOptions } from "../utils/providerOptions"
+import { Web3Provider } from 'walletlink/dist/provider/Web3Provider';
 
 const Home: NextPage = () => {
+  const [provider, setProvider] = useState()
+  const [library, setLibrary] = useState<ethers.providers.Web3Provider>()
+  const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
+  const [account, setAccount] = useState<string>()
+  const [signature, setSignature] = useState("")
+  const [error, setError] = useState("")
+  const [chainId, setChainId] = useState<number>()
+  const [network, setNetwork] = useState()
+  const [message, setMessage] = useState("")
+  const [signedMessage, setSignedMessage] = useState("")
+  const [verified, setVerified] = useState()
+
+  const connectWallet = async () => {
+    console.log("connectWallet")
+    try {
+      if (web3Modal) {
+        const provider = await web3Modal.connect()
+        const library = new ethers.providers.Web3Provider(provider)
+        const accounts = await library.listAccounts()
+        const network = await library.getNetwork()
+        setProvider(provider)
+        setLibrary(library)
+        if (accounts) setAccount(accounts[0])
+        setChainId(network.chainId)
+      }
+    } catch (error) {
+      setError(error as string)
+    }
+  };
+
+  const refreshState = () => {
+    setAccount(undefined);
+    setChainId(undefined);
+    setNetwork(undefined);
+    setMessage("");
+    setSignature("");
+    setVerified(undefined);
+  };
+
+  const disconnect = async () => {
+    if (web3Modal) {
+      await web3Modal.clearCachedProvider();
+      refreshState();
+    }
+  };
+
+  useEffect(() => {
+    if (web3Modal && web3Modal.cachedProvider) {
+      connectWallet();
+    } else {
+      const web3Modal = new Web3Modal({
+        cacheProvider: true, // optional
+        providerOptions // required
+      });
+      setWeb3Modal(web3Modal)
+    }
+  }, []);
+
+
+
   return (
     <div className={styles.container}>
       <Head>
@@ -14,43 +79,13 @@ const Home: NextPage = () => {
 
       <main className={styles.main}>
         <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
+          Welcome to AliteDefi
         </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+          {!account ? (
+            <button onClick={connectWallet}>Connect Wallet</button>
+          ) : (
+            <button onClick={disconnect}>Disconnect</button>
+          )}
       </main>
 
       <footer className={styles.footer}>
