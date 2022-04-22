@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
@@ -26,7 +26,7 @@ const Home: NextPage = () => {
   const [signedMessage, setSignedMessage] = useState("")
   const [verified, setVerified] = useState()
 
-  const connectWallet = async () => {
+  const connectWallet = useCallback(async () => {
     console.log("connectWallet")
     try {
       if (web3Modal) {
@@ -42,7 +42,7 @@ const Home: NextPage = () => {
     } catch (error) {
       setError(error as string)
     }
-  };
+  }, [web3Modal]);
 
   const handleNetwork = (e: any) => {
     const id = e.target.value;
