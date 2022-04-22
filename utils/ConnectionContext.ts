@@ -1,5 +1,10 @@
 import React from "react"
 
-const ConnectionContext = React.createContext({account: ''})
+interface IConnectionContext {
+    account: string | undefined;
+    chainId: Number | undefined;
+}
+
+const ConnectionContext = React.createContext<IConnectionContext>({account: undefined, chainId: undefined})
 
 export default ConnectionContext

@@ -20,7 +20,7 @@ const Home: NextPage = () => {
   const [account, setAccount] = useState<string>()
   const [signature, setSignature] = useState("")
   const [error, setError] = useState("")
-  const [chainId, setChainId] = useState<number>()
+  const [chainId, setChainId] = useState<Number>()
   const [network, setNetwork] = useState<Number>()
   const [message, setMessage] = useState("")
   const [signedMessage, setSignedMessage] = useState("")
@@ -130,7 +130,7 @@ const Home: NextPage = () => {
               <div className="accountManagement">
                 <button onClick={disconnect}>Disconnect</button>
               </div>
-              <ConnectionContext.Provider value={{account: account}}>
+              <ConnectionContext.Provider value={{account: account, chainId: chainId}}>
                 <ChainInfo />
               </ConnectionContext.Provider>
             </div>

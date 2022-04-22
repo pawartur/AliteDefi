@@ -6,9 +6,14 @@ const ChainInfo = () => {
   const connectionInfo = useContext(ConnectionContext);
 
   return (
-    <div>
+    <section>
+      <div>
         Address {connectionInfo.account}
-    </div>
+      </div>
+      <div>
+        ChainId {connectionInfo.chainId}
+      </div>
+    </section>
   )
 }
 
