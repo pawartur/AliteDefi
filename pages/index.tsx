@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
@@ -10,6 +10,8 @@ import { toHex } from '../utils/toHex'
 import { networkParams } from '../utils/networkParams'
 import { truncateAddress } from '../utils/truncateAddress'
 import { Web3Provider } from 'walletlink/dist/provider/Web3Provider'
+import ConnectionContext from '../utils/ConnectionContext'
+import ChainInfo from './ChainInfo'
 
 const Home: NextPage = () => {
   const [provider, setProvider] = useState()
@@ -130,21 +132,15 @@ const Home: NextPage = () => {
               <div className="accountManagement">
                 <button onClick={disconnect}>Disconnect</button>
               </div>
+              <ConnectionContext.Provider value={{account: account}}>
+                <ChainInfo />
+              </ConnectionContext.Provider>
             </div>
           )}
       </main>
 
       <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
+        ETHAmsterdam 2022
       </footer>
     </div>
   )
