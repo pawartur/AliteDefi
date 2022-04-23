@@ -86,11 +86,11 @@ const ChainInfo = () => {
 
   const renderPortfolio = () => {
     return (
-      <div className="portfolio">
-        <p className="currency">Currency: {portfolio?.currency}</p>
-        <p className="balance">Balance: {portfolio?.balance}</p>
-        <p className="gainLoss">+/-: {portfolio?.overallGainLoss}</p>
-        <p className="gainLossPercentage">+/-(%): {portfolio?.overallGainLossPercentage}</p>
+      <div className="portfolio flex pb-0 font-actor text-3xl font-semibold space-x-4">
+        <div className="currency">Currency: {portfolio?.currency}</div>
+        <div className="balance">Balance: {portfolio?.balance}</div>
+        <div className="gainLoss">+/-: {portfolio?.overallGainLoss}</div>
+        <div className="gainLossPercentage">+/-(%): {portfolio?.overallGainLossPercentage}</div>
       </div>
     )
   }
