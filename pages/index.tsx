@@ -28,6 +28,7 @@ const Home: NextPage = () => {
   const [library, setLibrary] = useState<ethers.providers.Web3Provider>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [account, setAccount] = useState<string>()
+  const [aavePoolsData, setAaavePoolsData] = useState()
   const [signature, setSignature] = useState("")
   const [error, setError] = useState("")
   const [chainId, setChainId] = useState<Number>()
@@ -108,6 +109,22 @@ const Home: NextPage = () => {
     }
   }, [connectWallet, web3Modal]);
 
+  useEffect(() => {
+    const fetchThePools = async () => {
+      const aavePoolData = await fetchAavePools()
+      setAaavePoolsData(aavePoolData)
+    }
+    fetchThePools()
+  }, [account])
+
+  const renderAPYData = () => {
+    return (
+      <div>
+        
+      </div>
+    )
+  }
+
   return (
     <div className="w-full bg-slate-800">
       <Head>
@@ -132,6 +149,7 @@ const Home: NextPage = () => {
           </div>
         ) : (
             <div>
+              {renderAPYData()}
               <div className="networkHandler">
                 <select placeholder="Select network" onChange={handleNetwork}>
                   <option value="1">Ethereum Mainnet</option>
