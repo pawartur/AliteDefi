@@ -13,6 +13,7 @@ import ChainInfo from '../components/ChainInfo'
 import fetchAavePools from '../data/fetchAavePools'
 import fetchAavePositions from '../data/fetchAavePositions'
 import fetchCreamPools from '../data/fetchCreamPools'
+import fetchCreamPositions from '../data/fetchCreamPositions'
 import { ApolloClient } from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
@@ -39,7 +40,7 @@ const Home: NextPage = () => {
 
   const connectWallet = useCallback(async () => {
     console.log("connectWallet")
-    console.log(await fetchCreamPools())
+    console.log(await fetchCreamPositions("0x26609e6c2AB0D93bB244C0f35e18Eb821144820a"))
     try {
       if (web3Modal) {
         const provider = await web3Modal.connect()

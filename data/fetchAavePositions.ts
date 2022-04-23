@@ -61,7 +61,6 @@ export default async function fetchAavePositions(account: string): Promise<any> 
 
   const formattedReserves = await fetchAavePools();
 
-  // Docs: https://github.com/aave/aave-utilities#subgraph
   return formatUserSummary({
     currentTimestamp,
     userReserves,
