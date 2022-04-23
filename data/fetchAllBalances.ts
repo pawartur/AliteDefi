@@ -24,7 +24,7 @@ export async function fetchAllBalances(
     let symbolCache = new Set<string>()
     let symbolToAddr = {}
     let balanceReqs = [];
-    let balances = {};
+    let balances: { [tokenSymbol: string]: number } = {};
     erc20Transactions.forEach(async (transaction: Transaction) => {
         if (!symbolCache.has(transaction.tokenSymbol)) {
             symbolToAddr[transaction.tokenSymbol] = transaction.contractAddress
@@ -36,7 +36,6 @@ export async function fetchAllBalances(
             ).then((v) => balances[transaction.tokenSymbol] = v))
         }
     })
-    let resolvedBalances = await Promise.all(balanceReqs)
     const uniswapClient = new ApolloClient({
         uri: "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2",
         cache: new InMemoryCache()
@@ -53,7 +52,7 @@ export async function fetchAllBalances(
           }
     }
     `
-    const symbolToPrice = {}
+    const symbolToPrice: { [tokenSymbol: string]: number } = {}
     const valuedBalancePromises = []
     symbolCache.forEach(symbol => {
         valuedBalancePromises.push(
@@ -67,16 +66,17 @@ export async function fetchAllBalances(
         )
     })
     console.log('wat', valuedBalancePromises)
+    let resolvedBalances = await Promise.all(balanceReqs)
     const latestPrices = await Promise.all(valuedBalancePromises)
+    Object.keys(balances).forEach((tokenSymbol: string) => {
+        result.push({
+            chainId: chainId,
+            symbol: tokenSymbol,
+            amount: balances[tokenSymbol],
+            priceInUSD:symbolToPrice[tokenSymbol]
+        })
+    })
+
     console.log('prices', symbolToPrice)
-    return [];
-    // result.push({
-    //     chainId: chainId,
-    //     symbol: transaction.tokenSymbol,
-    //     amount: erc20TokenAmount,
-    //     // TODO: Store the list of supported stable coins somewhere (as we also use it e.g. in our call to Aave)
-    //     priceInUSD: ["USDC", "USDT", "DAI"].some((tokenSymbol: string) => {
-    //         return transaction.tokenSymbol === tokenSymbol
-    //     }) ? 1 : 0 // TODO: Get the prices
-    // })
+    return result;
 }
