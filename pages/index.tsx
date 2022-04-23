@@ -185,26 +185,30 @@ const Home: NextPage = () => {
             </div>
           </div>
         ) : (
-          <div>
-            {renderedPoolData}
-            <div className="networkHandler">
-              <select placeholder="Select network" onChange={handleNetwork}>
-                <option value="1">Ethereum Mainnet</option>
-                <option value="42">Ethereum Kovan</option>
-                <option value="137">Polygon</option>
-              </select>
-              <button onClick={switchNetwork}>Switch Network</button>
+            <div>
+              <div className="networkHandler flex items-center justify-between">
+                <div className="">
+                  <select className="p-4 rounded-full" placeholder="Select network" onChange={handleNetwork}>
+                    <option value="1">Ethereum Mainnet</option>
+                    <option value="42">Ethereum Kovan</option>
+                    <option value="137">Polygon</option>
+                  </select>
+                  <button className="p-2" onClick={switchNetwork}>Switch Network</button>
+                </div>
+                <div className="accountManagement">
+                  <button onClick={disconnect}>Disconnect</button>
+                </div>
+              </div>
+
+              <ApolloProvider client={apolloClient}>
+                <ConnectionContext.Provider value={{ account: account, chainId: chainId, library: library }}>
+                  <ChainInfo />
+                </ConnectionContext.Provider>
+              </ApolloProvider>
+              {renderedPoolData}
+
             </div>
-            <div className="accountManagement">
-              <button onClick={disconnect}>Disconnect</button>
-            </div>
-            <ApolloProvider client={apolloClient}>
-              <ConnectionContext.Provider value={{ account: account, chainId: chainId, library: library }}>
-                <ChainInfo />
-              </ConnectionContext.Provider>
-            </ApolloProvider>
-          </div>
-        )}
+          )}
 
 
       </main>
