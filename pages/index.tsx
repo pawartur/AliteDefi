@@ -199,7 +199,7 @@ const Home: NextPage = () => {
               <button onClick={disconnect}>Disconnect</button>
             </div>
             <ApolloProvider client={apolloClient}>
-              <ConnectionContext.Provider value={{ account: account, chainId: chainId }}>
+              <ConnectionContext.Provider value={{ account: account, chainId: chainId, library: library }}>
                 <ChainInfo />
               </ConnectionContext.Provider>
             </ApolloProvider>

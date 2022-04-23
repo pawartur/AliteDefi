@@ -1,6 +1,6 @@
 import { Transaction } from "../@types/types";
 
-export async function fetchBalance(
+export async function fetchNativeTokenBalance(
     account: string, 
     chainId: number
 ): Promise<Number> {

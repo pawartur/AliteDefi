@@ -1,6 +1,6 @@
 import { Transaction } from "../@types/types";
 
-export async function fetchTransactions(
+export async function fetchERC20Transactions(
     account: string, 
     chainId: number
 ): Promise<Transaction[]> {

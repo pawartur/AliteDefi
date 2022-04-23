@@ -18,6 +18,13 @@ export enum Currency {
     eth = "ETH"
 }
 
+export type TokenBalance = {
+    chainId: number;
+    symbol: string;
+    amount: number;
+    priceInUSD: number;
+}
+
 export type Portfolio = {
     currency: Currency;
     balance: number;
