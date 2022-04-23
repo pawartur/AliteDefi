@@ -28,6 +28,8 @@ export async function buildPortfolio(
           }
     }
     `
+
+    let incomingTransactionValuesAtTheTimeOfTransaction: Number[] = []
     const valueQueries = incommingERC20Transactions.map((t) => {
         return uniswapClient.query({
             query: gql(latestTokenPriceQuery),
@@ -35,23 +37,24 @@ export async function buildPortfolio(
                 timestamp: parseInt(t.timeStamp),
                 address: t.contractAddress,
             }
+        }).then(r => {
+            incomingTransactionValuesAtTheTimeOfTransaction.push(
+                (Number(t.value) / Math.pow(10, t.tokenDecimal)) * (r.data.tokenDayDatas[0]?.priceUSD ?? 0)
+            )
         });
     });
 
-    const totalIncomingValueInUSD = (await Promise.all(valueQueries)).reduce((acc, n) => {
-        console.log('iter', n)
-        return acc + (n.data.tokenDayDatas[0]?.priceUSD ?? 0);
+    const totalIncomingValueInUSD = (await Promise.all(valueQueries))
+    
+    incomingTransactionValuesAtTheTimeOfTransaction.reduce((acc, n) => {
+        return acc + n;
     }, 0)
     console.log('dem valiues', totalIncomingValueInUSD);
 
     let totalBalance = 0
     allTokenBalances.forEach((tokenBalance: TokenBalance) => {
-        console.log('tokenBalance.symbol', tokenBalance.symbol)
-        console.log('tokenBalance.amount', tokenBalance.amount)
-        console.log('tokenBalance.priceInUSD', tokenBalance.priceInUSD)
         totalBalance += (Number(tokenBalance.amount) / Math.pow(10, tokenBalance.decimal)) * tokenBalance.priceInUSD
     })
-    console.log('totalBalance', totalBalance)
 
     const overallGainLoss = totalBalance - totalIncomingValueInUSD
     const overallGainLossPercentage = (overallGainLoss / totalBalance) * 100
