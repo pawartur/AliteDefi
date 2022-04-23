@@ -13,11 +13,11 @@ export async function fetchAllBalances(
     provider: ethers.providers.Web3Provider
 ): Promise<TokenBalance[]> {
     let result: TokenBalance[] = []
-    const nativeTokenAmount = await fetchNativeTokenBalance(account, chainId)
+    const nativeTokenAmount = await provider.getBalance(account)
     result.push({
         chainId: chainId,
         symbol: 'ETH', // TODO: Don't hard-code
-        amount: nativeTokenAmount.valueOf(),
+        amount: nativeTokenAmount.toBigInt(),
         decimal: 18,
         priceInUSD: nativeTokenPriceInUSD
     })

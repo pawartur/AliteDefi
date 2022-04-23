@@ -1,7 +1,7 @@
 import { Transaction } from "../@types/types";
 
 export async function fetchNativeTokenBalance(
-    account: string, 
+    account: string,
     chainId: number
 ): Promise<Number> {
     if (chainId !== 1) {
