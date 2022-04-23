@@ -44,12 +44,11 @@ export async function buildPortfolio(
         });
     });
 
-    const totalIncomingValueInUSD = (await Promise.all(valueQueries))
-    
-    incomingTransactionValuesAtTheTimeOfTransaction.reduce((acc, n) => {
+    await Promise.all(valueQueries)
+    const totalIncomingValueInUSD = incomingTransactionValuesAtTheTimeOfTransaction.reduce((acc, n) => {
         return acc + n;
     }, 0)
-    console.log('dem valiues', totalIncomingValueInUSD);
+    console.log('total incoming value', totalIncomingValueInUSD);
 
     let totalBalance = 0
     allTokenBalances.forEach((tokenBalance: TokenBalance) => {
