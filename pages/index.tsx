@@ -98,17 +98,18 @@ const Home: NextPage = () => {
   }, [connectWallet, web3Modal]);
 
   return (
-    <div className={styles.container}>
+    <div className="w-full border">
       <Head>
         <title>Defi Torch</title>
         <meta name="description" content="Alighting the path" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to Defi Torch
-        </h1>
+      <main className="w-full h-screen bg-gradient-to-br from-slate-300 to-slate-400 p-6 font-dmsans tracking-tight text-slate-600">
+      <div className="text-5xl font-bold capitalize leading-tight tracking-tighter">
+      Multichain crypto &<br />
+      stablecoins portfolio tracking
+    </div>
           <p>{`Network ID: ${chainId ? chainId : "No Network"}`}</p>
           {!account ? (
             <div className="accountManagement">
