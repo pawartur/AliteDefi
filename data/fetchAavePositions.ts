@@ -2,19 +2,19 @@ import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
 import fetchAavePools from './fetchAavePools';
 import { formatUserSummary } from '@aave/math-utils';
 import dayjs from 'dayjs';
+import { chainIdToAaveSubgraph } from '../utils/networkParams';
 
-const aaveClient = new ApolloClient({
-  uri: 'https://api.thegraph.com/subgraphs/name/aave/aave-v2-matic',
-  cache: new InMemoryCache()
-})
-
-export default async function fetchAavePositions(account: string): Promise<any> {
+export default async function fetchAavePositions(account: string, chainId: Number): Promise<any> {
   // https://app.aave.com/markets/?marketName=proto_polygon
   // All queries against polygon V2
+  const aaveClient = new ApolloClient({
+    uri: chainIdToAaveSubgraph[chainId],
+    cache: new InMemoryCache()
+  })
 
   const userReservesQuery = `
-  query UserReserves {
-      userReserves(where: { user: "0x26609e6c2ab0d93bb244c0f35e18eb821144820a"}) {
+  query UserReserves($user: String!) {
+      userReserves(where: { user: $user}) {
         id
         reserve{
           id
@@ -35,7 +35,10 @@ export default async function fetchAavePositions(account: string): Promise<any> 
   `
   
   const userReservesData = await aaveClient.query({
-    query: gql(userReservesQuery)
+    query: gql(userReservesQuery),
+    variables: {
+      user: account
+    }
   })
 
   const userReserves = userReservesData.data.userReserves.map(userReserve => {
@@ -59,7 +62,7 @@ export default async function fetchAavePositions(account: string): Promise<any> 
     query: gql(baseCurrencyQuery)
   })
 
-  const formattedReserves = await fetchAavePools();
+  const formattedReserves = await fetchAavePools(chainId);
 
   return formatUserSummary({
     currentTimestamp,

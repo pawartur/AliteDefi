@@ -112,12 +112,14 @@ const Home: NextPage = () => {
   }, [connectWallet, web3Modal]);
 
   useEffect(() => {
-    const fetchThePools = async () => {
-      const aavePoolData = await fetchAavePools()
-      setAaavePoolsData(aavePoolData)
+    if (chainId !== undefined) {
+      const fetchThePools = async () => {
+        const aavePoolData = await fetchAavePools(chainId)
+        setAaavePoolsData(aavePoolData)
+      }
+      fetchThePools()
     }
-    fetchThePools()
-  }, [account])
+  }, [account, chainId])
 
   const renderedPoolData = (aavePoolsData ?? []).map((pool, i) => {
     return (<div key={i}> APY: {pool.supplyAPY} </div>)
@@ -143,7 +145,7 @@ const Home: NextPage = () => {
             <div className="text-5xl font-bold capitalize leading-tight tracking-tighter text-center">
               Multichain crypto &<br />
               stablecoins portfolio tracking
-           </div>
+            </div>
             <div className="mx-auto mt-6 w-full cursor-pointer rounded-full bg-slate-500 p-4 text-center text-sm font-semibold uppercase text-white shadow hover:bg-slate-400 hover:shadow-xl md:w-1/2" onClick={connectWallet}>Connect Wallet</div>
             <div className="w-full bg-gradient-to-br from-slate-100 to-slate-200 mt-10 p-6 font-dmsans tracking-tight text-slate-600">
               <div className="p-6 text-center md:flex">
@@ -178,34 +180,34 @@ const Home: NextPage = () => {
                     <path d="M133.7,184.6l-19.8,19.8a44.1,44.1,0,0,1-62.3-62.3l28.3-28.2a43.9,43.9,0,0,1,62.2,0" fill="none" stroke="#000000" strokeLinecap="round" strokeLinejoin="round" strokeWidth="16"></path>
                   </svg>
                   Multichain support. Polygon & Ethereum, more coming soon.
-               </div>
+                </div>
               </div>
             </div>
           </div>
         ) : (
-            <div>
-              {renderedPoolData}
-              <div className="networkHandler">
-                <select placeholder="Select network" onChange={handleNetwork}>
-                  <option value="1">Ethereum Mainnet</option>
-                  <option value="3">Ethereum Ropsten</option>
-                  <option value="4">Ethereum Rinkeby</option>
-                  <option value="42">Ethereum Kovan</option>
-                  <option value="1666600000">Harmony</option>
-                  <option value="137">Polygon</option>
-                </select>
-                <button onClick={switchNetwork}>Switch Network</button>
-              </div>
-              <div className="accountManagement">
-                <button onClick={disconnect}>Disconnect</button>
-              </div>
-              <ApolloProvider client={apolloClient}>
-                <ConnectionContext.Provider value={{ account: account, chainId: chainId }}>
-                  <ChainInfo />
-                </ConnectionContext.Provider>
-              </ApolloProvider>
+          <div>
+            {renderedPoolData}
+            <div className="networkHandler">
+              <select placeholder="Select network" onChange={handleNetwork}>
+                <option value="1">Ethereum Mainnet</option>
+                <option value="3">Ethereum Ropsten</option>
+                <option value="4">Ethereum Rinkeby</option>
+                <option value="42">Ethereum Kovan</option>
+                <option value="1666600000">Harmony</option>
+                <option value="137">Polygon</option>
+              </select>
+              <button onClick={switchNetwork}>Switch Network</button>
             </div>
-          )}
+            <div className="accountManagement">
+              <button onClick={disconnect}>Disconnect</button>
+            </div>
+            <ApolloProvider client={apolloClient}>
+              <ConnectionContext.Provider value={{ account: account, chainId: chainId }}>
+                <ChainInfo />
+              </ConnectionContext.Provider>
+            </ApolloProvider>
+          </div>
+        )}
 
 
       </main>

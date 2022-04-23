@@ -1,13 +1,14 @@
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
 import { formatReserves, ReserveDataWithPrice } from '@aave/math-utils';
 import dayjs from 'dayjs';
+import { chainIdToAaveSubgraph } from '../utils/networkParams';
 
-const aaveClient = new ApolloClient({
-  uri: 'https://api.thegraph.com/subgraphs/name/aave/aave-v2-matic',
-  cache: new InMemoryCache()
-})
+export default async function fetchAavePools(chainId: Number): Promise<any> {
+  const aaveClient = new ApolloClient({
+    uri: chainIdToAaveSubgraph[chainId],
+    cache: new InMemoryCache()
+  })
 
-export default async function fetchAavePools(): Promise<any> {
   // https://app.aave.com/markets/?marketName=proto_polygon
   // All queries against polygon V2
   const stableCoinPoolQuery = `
@@ -60,6 +61,7 @@ export default async function fetchAavePools(): Promise<any> {
   let priceData, poolData;
   [priceData, poolData] = await Promise.all([priceQuery, poolQuery])
 
+
   const reserves = poolData.data.reserves.map(reserve => {
     return {
       ...reserve,
@@ -91,5 +93,5 @@ export default async function fetchAavePools(): Promise<any> {
     currentTimestamp,
     marketReferenceCurrencyDecimals: 18,
     marketReferencePriceInUsd: (1 / (parseInt(priceData.data.priceOracles[0].usdPriceEth) / (10 ** 18))).toString(),
-  });
+  }).filter(pool => parseFloat(pool.supplyAPY) !== 0); // Dumb hack because Kovan has a bunch of trash data
 }

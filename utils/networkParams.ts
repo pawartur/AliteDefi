@@ -17,3 +17,7 @@ export const networkParams:  { [name: string]: {} } = {
     }
   };
 
+export const chainIdToAaveSubgraph = {
+  42: 'https://api.thegraph.com/subgraphs/name/aave/protocol-v2-kovan',
+  137: 'https://api.thegraph.com/subgraphs/name/aave/aave-v2-matic'
+}
