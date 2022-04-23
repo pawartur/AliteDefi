@@ -19,6 +19,8 @@ import { buildPortfolio } from "../data/buildPortfolio";
 import { useQuery } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { apolloClient } from "../pages";
+import { filterIncomingTransactions } from "../data/filterIncomingTransactions";
+import { figureOutRequiredHistoricData } from "../data/figureOutRequiredHistoricData";
 
 const ETH_PRICE_QUERY = gql`
   query bundles {
@@ -40,6 +42,7 @@ const ChainInfo = () => {
     })
 
   
+
   const ethPriceInUSD = ethPriceData && ethPriceData.bundles[0].ethPrice
 
   const renderEthPrice = () => {
@@ -68,7 +71,15 @@ const ChainInfo = () => {
   }
 
   const updatePortfolio = () => {
+    const incomingTransactions = filterIncomingTransactions(
+      new String(connectionInfo.account),
+      transations
+    )
+    const requiredHistoricData = figureOutRequiredHistoricData(incomingTransactions)
+    console.log(requiredHistoricData)
+
     const portfolio = buildPortfolio(
+      new String(connectionInfo.account),
       balance,
       transations,
       ethPriceInUSD,
@@ -80,9 +91,15 @@ const ChainInfo = () => {
 
   useEffect(() => {
     updateTransactions()
+  }, [ethPriceInUSD])
+
+  useEffect(() => {
     updateBalance()
+  }, [transations])
+
+  useEffect(() => {
     updatePortfolio()
-  }, [])
+  }, [balance])
 
   const renderPortfolio = () => {
     return (
