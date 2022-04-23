@@ -190,10 +190,7 @@ const Home: NextPage = () => {
             <div className="networkHandler">
               <select placeholder="Select network" onChange={handleNetwork}>
                 <option value="1">Ethereum Mainnet</option>
-                <option value="3">Ethereum Ropsten</option>
-                <option value="4">Ethereum Rinkeby</option>
                 <option value="42">Ethereum Kovan</option>
-                <option value="1666600000">Harmony</option>
                 <option value="137">Polygon</option>
               </select>
               <button onClick={switchNetwork}>Switch Network</button>
