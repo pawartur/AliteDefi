@@ -12,9 +12,7 @@ import { truncateAddress } from '../utils/truncateAddress'
 import { Web3Provider } from 'walletlink/dist/provider/Web3Provider'
 import ConnectionContext from '../utils/ConnectionContext'
 import ChainInfo from './ChainInfo'
-import reserves from './api/aave'
-
-console.log(reserves)
+import fetchAavePools from '../data/fetchAavePools'
 
 const Home: NextPage = () => {
   const [provider, setProvider] = useState()
@@ -31,6 +29,7 @@ const Home: NextPage = () => {
 
   const connectWallet = useCallback(async () => {
     console.log("connectWallet")
+    console.log(await fetchAavePools())
     try {
       if (web3Modal) {
         const provider = await web3Modal.connect()
