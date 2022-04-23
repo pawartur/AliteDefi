@@ -22,6 +22,7 @@ export type TokenBalance = {
     chainId: number;
     symbol: string;
     amount: number;
+    decimal: number;
     priceInUSD: number;
 }
 

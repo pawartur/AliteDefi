@@ -22,8 +22,12 @@ export function buildPortfolio(
 
     let totalBalance = 0
     allTokenBalances.forEach((tokenBalance: TokenBalance) => {
-        totalBalance += tokenBalance.amount * tokenBalance.priceInUSD
+        console.log('tokenBalance.symbol', tokenBalance.symbol)
+        console.log('tokenBalance.amount', tokenBalance.amount)
+        console.log('tokenBalance.priceInUSD', tokenBalance.priceInUSD)
+        totalBalance += (Number(tokenBalance.amount) / Math.pow(10, tokenBalance.decimal)) * tokenBalance.priceInUSD
     })
+    console.log('totalBalance', totalBalance)
 
     const overallGainLoss = totalBalance - totalIncomingValueInUSD
     const overallGainLossPercentage = (overallGainLoss/totalBalance)*100

@@ -44,7 +44,7 @@ const ChainInfo = () => {
     })
 
   const ethPriceInUSD = ethPriceData && ethPriceData.bundles[0].ethPrice
-  //parseFloat(ethPriceInUSD.toString()).toFixed(2)}
+  //parseFloat(ethPriceInUSD.toString()).toFixed(2)}  
 
   const updateAllBalances = async () => {
     const fetchedBalances = await fetchAllBalances(
@@ -54,7 +54,6 @@ const ChainInfo = () => {
       erc20Transations,
       connectionInfo.library!
       )
-    console.log(fetchedBalances)
     setAllTokenBalances(fetchedBalances)
   }
 
@@ -70,7 +69,7 @@ const ChainInfo = () => {
     )
     const requiredHistoricData = figureOutRequiredHistoricData(incomingTransactions)
     console.log(requiredHistoricData)
-
+    console.log('allTokenBalances', allTokenBalances)
     const portfolio = buildPortfolio(
       new String(connectionInfo.account),
       allTokenBalances,

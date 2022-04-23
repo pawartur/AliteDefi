@@ -18,6 +18,7 @@ export async function fetchAllBalances(
         chainId: chainId,
         symbol: 'ETH', // TODO: Don't hard-code
         amount: nativeTokenAmount.valueOf(),
+        decimal: 18,
         priceInUSD: nativeTokenPriceInUSD
     })
 
@@ -25,9 +26,11 @@ export async function fetchAllBalances(
     let symbolToAddr = {}
     let balanceReqs = [];
     let balances: { [tokenSymbol: string]: number } = {};
+    let decimalPlaces: { [tokenSymbol: string]: number } = {};
     erc20Transactions.forEach(async (transaction: Transaction) => {
         if (!symbolCache.has(transaction.tokenSymbol)) {
             symbolToAddr[transaction.tokenSymbol] = transaction.contractAddress
+            decimalPlaces[transaction.tokenSymbol] = transaction.tokenDecimal
             symbolCache.add(transaction.tokenSymbol)
             balanceReqs.push(fetchERC20BalanceOf(
                 account,
@@ -52,7 +55,7 @@ export async function fetchAllBalances(
           }
     }
     `
-    const symbolToPrice: { [tokenSymbol: string]: number } = {}
+    const symbolToPrice = {}
     const valuedBalancePromises = []
     symbolCache.forEach(symbol => {
         valuedBalancePromises.push(
@@ -68,13 +71,19 @@ export async function fetchAllBalances(
     console.log('wat', valuedBalancePromises)
     let resolvedBalances = await Promise.all(balanceReqs)
     const latestPrices = await Promise.all(valuedBalancePromises)
+    console.log('balances', balances)
+    console.log('symbolToPrice', symbolToPrice)
     Object.keys(balances).forEach((tokenSymbol: string) => {
-        result.push({
-            chainId: chainId,
-            symbol: tokenSymbol,
-            amount: balances[tokenSymbol],
-            priceInUSD:symbolToPrice[tokenSymbol]
-        })
+        if (balances[tokenSymbol] && symbolToPrice[tokenSymbol].data.tokenDayDatas.length > 0) {
+            console.log('trolololololo')
+            result.push({
+                chainId: chainId,
+                symbol: tokenSymbol,
+                amount: balances[tokenSymbol],
+                decimal: decimalPlaces[tokenSymbol],
+                priceInUSD:symbolToPrice[tokenSymbol].data.tokenDayDatas[0].priceUSD
+            })
+        }
     })
 
     console.log('prices', symbolToPrice)
