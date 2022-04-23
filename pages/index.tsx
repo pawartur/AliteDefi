@@ -133,15 +133,15 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="w-full mx-auto h-screen max-w-screen-xl bg-gradient-to-br from-slate-300 to-slate-400 p-6 font-dmsans tracking-tight text-slate-600">
-        <div className="flex items-center justify-between">
-          <img className="h-24" src="img/logo.png"></img>
-          <div>{`Network ID: ${chainId ? chainId : "No Network"}`}</div>
-        </div>
+      <main className="w-full mx-auto h-screen max-w-screen-xl bg-gradient-to-br from-slate-300 to-slate-400 font-dmsans tracking-tight text-slate-600">
+
 
 
         {!account ? (
           <div className="accountManagement">
+          <div className="flex items-center justify-between w-full p-6">
+                <img className="h-24" src="img/logo.png"></img>
+                </div>
             <div className="text-5xl font-bold capitalize leading-tight tracking-tighter text-center">
               Multichain crypto &<br />
               stablecoins portfolio tracking
@@ -186,17 +186,20 @@ const Home: NextPage = () => {
           </div>
         ) : (
             <div>
-              <div className="networkHandler flex items-center justify-between">
-                <div className="">
-                  <select className="p-4 rounded-full" placeholder="Select network" onChange={handleNetwork}>
-                    <option value="1">Ethereum Mainnet</option>
-                    <option value="42">Ethereum Kovan</option>
-                    <option value="137">Polygon</option>
-                  </select>
-                  <button className="p-2" onClick={switchNetwork}>Switch Network</button>
-                </div>
-                <div className="accountManagement">
-                  <button onClick={disconnect}>Disconnect</button>
+              <div className="flex items-center justify-between w-full p-6">
+                <img className="h-24" src="img/logo.png"></img>
+                <div className="networkHandler flex items-center justify-between">
+                  <div className="">
+                    <select className="p-4 rounded-full" placeholder="Select network" onChange={handleNetwork}>
+                      <option value="1">Ethereum Mainnet</option>
+                      <option value="42">Ethereum Kovan</option>
+                      <option value="137">Polygon</option>
+                    </select>
+                    <button className="p-2" onClick={switchNetwork}>Switch Network</button>
+                  </div>
+                  <div className="accountManagement">
+                    <button onClick={disconnect}>Disconnect</button>
+                  </div>
                 </div>
               </div>
 

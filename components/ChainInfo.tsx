@@ -98,8 +98,8 @@ const ChainInfo = () => {
     console.log('that portfolio', portfolio)
     return (
       <div className="portfolio pb-0 font-actor text-3xl font-semibold space-x-4">
-        <div className="currency text-lg">Currency: {portfolio?.currency}</div>
-        <div className="flex items-center justify-between">
+        <div className="currency text-xs">Currency: {portfolio?.currency}</div>
+        <div className="flex items-center justify-between pt-6">
         <div className="balance">Current balance: ${portfolio?.balance}</div>
         <div className="gainLoss text-lg">Profit/loss: ${portfolio?.overallGainLoss}</div>
         <div className="gainLossPercentage text-lg">Profit/loss: {portfolio?.overallGainLossPercentage}%</div>
@@ -109,7 +109,7 @@ const ChainInfo = () => {
   }
 
   return (
-    <div className="w-full p-4 text-xs text-right font-bold">
+    <div className="w-full p-4 text-xs text-right">
         <p className="accountInfo">Portfolio info for {connectionInfo.account}</p>
         {renderPortfolio()}
     </div>
