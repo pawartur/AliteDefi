@@ -3,7 +3,7 @@ import { formatReserves, ReserveDataWithPrice } from '@aave/math-utils';
 import dayjs from 'dayjs';
 
 const aaveClient = new ApolloClient({
-  uri: 'https://api.thegraph.com/subgraphs/name/aave/protocol-v2',
+  uri: 'https://api.thegraph.com/subgraphs/name/aave/aave-v2-matic',
   cache: new InMemoryCache()
 })
 

@@ -8,25 +8,37 @@ import { providerOptions } from "../utils/providerOptions"
 import { toHex } from '../utils/toHex'
 import { networkParams } from '../utils/networkParams'
 import ConnectionContext from '../utils/ConnectionContext'
+import { ApolloProvider } from 'react-apollo'
 import ChainInfo from '../components/ChainInfo'
 import fetchAavePools from '../data/fetchAavePools'
+import fetchAavePositions from '../data/fetchAavePositions'
+import { ApolloClient } from 'apollo-client'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+import { HttpLink } from 'apollo-link-http'
+
+export const apolloClient = new ApolloClient({
+  link: new HttpLink({
+    uri: process.env.NEXT_PUBLIC_UNISWAP_API_ENDPOINT,
+  }),
+  cache: new InMemoryCache(),
+})
 
 const Home: NextPage = () => {
   const [provider, setProvider] = useState()
   const [library, setLibrary] = useState<ethers.providers.Web3Provider>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [account, setAccount] = useState<string>()
+  const [aavePoolsData, setAaavePoolsData] = useState()
   const [signature, setSignature] = useState("")
   const [error, setError] = useState("")
   const [chainId, setChainId] = useState<Number>()
   const [network, setNetwork] = useState<Number>()
   const [message, setMessage] = useState("")
-  const [signedMessage, setSignedMessage] = useState("")
   const [verified, setVerified] = useState()
 
   const connectWallet = useCallback(async () => {
     console.log("connectWallet")
-    console.log(await fetchAavePools())
+    console.log(await fetchAavePositions(''))
     try {
       if (web3Modal) {
         const provider = await web3Modal.connect()
@@ -97,6 +109,21 @@ const Home: NextPage = () => {
     }
   }, [connectWallet, web3Modal]);
 
+  useEffect(() => {
+    const fetchThePools = async () => {
+      const aavePoolData = await fetchAavePools()
+      setAaavePoolsData(aavePoolData)
+    }
+    fetchThePools()
+  }, [account])
+
+  const renderedPoolData = (aavePoolsData ?? []).map((pool, i) => {
+    console.log(pool)
+    return (<div key={i}> APY: {pool.supplyAPY} </div>)
+  });
+
+  console.log('result', renderedPoolData)
+
   return (
     <div className="w-full bg-slate-800">
       <Head>
@@ -158,6 +185,7 @@ const Home: NextPage = () => {
           </div>
         ) : (
             <div>
+              {renderedPoolData}
               <div className="networkHandler">
                 <select placeholder="Select network" onChange={handleNetwork}>
                   <option value="1">Ethereum Mainnet</option>
@@ -172,14 +200,11 @@ const Home: NextPage = () => {
               <div className="accountManagement">
                 <button onClick={disconnect}>Disconnect</button>
               </div>
-              <ConnectionContext.Provider value={{ account: account, chainId: chainId }}>
-                <ChainInfo />
-              </ConnectionContext.Provider>
-              <div className="sticky bottom-4 m-6 flex rounded-full border p-6 text-center text-sm font-semibold uppercase backdrop-blur-md">
-                <div className="w-1/3">home</div>
-                <div className="grow">panel</div>
-                <div className="w-1/3">profile</div>
-              </div>
+              <ApolloProvider client={apolloClient}>
+                <ConnectionContext.Provider value={{ account: account, chainId: chainId }}>
+                  <ChainInfo />
+                </ConnectionContext.Provider>
+              </ApolloProvider>
             </div>
           )}
 
