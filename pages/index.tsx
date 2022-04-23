@@ -12,6 +12,9 @@ import { truncateAddress } from '../utils/truncateAddress'
 import { Web3Provider } from 'walletlink/dist/provider/Web3Provider'
 import ConnectionContext from '../utils/ConnectionContext'
 import ChainInfo from './ChainInfo'
+import reserves from './api/aave'
+
+console.log(reserves)
 
 const Home: NextPage = () => {
   const [provider, setProvider] = useState()
