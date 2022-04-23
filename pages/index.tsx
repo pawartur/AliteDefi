@@ -40,7 +40,6 @@ const Home: NextPage = () => {
 
   const connectWallet = useCallback(async () => {
     console.log("connectWallet")
-    console.log(await fetchCreamPositions("0x26609e6c2AB0D93bB244C0f35e18Eb821144820a"))
     try {
       if (web3Modal) {
         const provider = await web3Modal.connect()
@@ -115,6 +114,7 @@ const Home: NextPage = () => {
     if (chainId !== undefined) {
       const fetchThePools = async () => {
         const aavePoolData = await fetchAavePools(chainId)
+        // console.log(await fetchCreamPools(chainId))
         setAaavePoolsData(aavePoolData)
       }
       fetchThePools()

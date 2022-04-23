@@ -22,3 +22,8 @@ export const chainIdToAaveSubgraph = {
   42: 'https://api.thegraph.com/subgraphs/name/aave/protocol-v2-kovan',
   137: 'https://api.thegraph.com/subgraphs/name/aave/aave-v2-matic',
 }
+
+export const chainIdToCreamDataURL = {
+  1: 'https://api.cream.finance/api/v1/rates?comptroller=eth',
+  137: 'https://api.cream.finance/api/v1/rates?comptroller=polygon'
+}
