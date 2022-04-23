@@ -16,11 +16,44 @@ import { fetchTransactions } from "../data/fetchTransactions";
 import { fetchBalance } from "../data/fetchBalance";
 import { buildPortfolio } from "../data/buildPortfolio";
 
+import { useQuery } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
+import { apolloClient } from "../pages";
+
+const ETH_PRICE_QUERY = gql`
+  query bundles {
+    bundles(where: { id: "1" }) {
+      ethPrice
+    }
+  }
+`
 const ChainInfo = () => {
   const connectionInfo = useContext(ConnectionContext);
   const [transations, setTransactions] = useState<Transaction[]>([])
   const [balance, setBalance] = useState<Number>(0)
   const [portfolio, setPortfolio] = useState<Portfolio>()
+
+  const { loading: ethLoading, data: ethPriceData } = useQuery(
+    ETH_PRICE_QUERY,
+    {
+      client:apolloClient,
+    })
+
+  const ethPriceInUSD = ethPriceData && ethPriceData.bundles[0].ethPrice
+  const renderEthPrice = () => {
+    return (
+      <div className="priceData">
+        <div>
+          Eth price:{' '}
+          {ethLoading
+            ? 'Loading token data...'
+            : '$' +
+              // parse responses as floats and fix to 2 decimals
+              parseFloat(ethPriceInUSD).toFixed(2)}
+        </div>
+      </div>
+    )
+  }
 
   const updateBalance = async () => {
     const fetchedBalance = await fetchBalance(connectionInfo.account || "", 1)
@@ -63,6 +96,7 @@ const ChainInfo = () => {
     <div>
         <p className="accountInfo">Address {connectionInfo.account}</p>
         {renderPortfolio()}
+        {renderEthPrice()}
     </div>
   )
 }

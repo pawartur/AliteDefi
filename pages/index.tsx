@@ -8,8 +8,19 @@ import { providerOptions } from "../utils/providerOptions"
 import { toHex } from '../utils/toHex'
 import { networkParams } from '../utils/networkParams'
 import ConnectionContext from '../utils/ConnectionContext'
+import { ApolloProvider } from 'react-apollo'
 import ChainInfo from '../components/ChainInfo'
 import fetchAavePools from '../data/fetchAavePools'
+import { ApolloClient } from 'apollo-client'
+import { InMemoryCache } from 'apollo-cache-inmemory'
+import { HttpLink } from 'apollo-link-http'
+
+export const apolloClient = new ApolloClient({
+  link: new HttpLink({
+    uri: process.env.NEXT_PUBLIC_UNISWAP_API_ENDPOINT,
+  }),
+  cache: new InMemoryCache(),
+})
 
 const Home: NextPage = () => {
   const [provider, setProvider] = useState()
@@ -21,7 +32,6 @@ const Home: NextPage = () => {
   const [chainId, setChainId] = useState<Number>()
   const [network, setNetwork] = useState<Number>()
   const [message, setMessage] = useState("")
-  const [signedMessage, setSignedMessage] = useState("")
   const [verified, setVerified] = useState()
 
   const connectWallet = useCallback(async () => {
@@ -135,9 +145,11 @@ const Home: NextPage = () => {
               <div className="accountManagement">
                 <button onClick={disconnect}>Disconnect</button>
               </div>
-              <ConnectionContext.Provider value={{ account: account, chainId: chainId }}>
-                <ChainInfo />
-              </ConnectionContext.Provider>
+              <ApolloProvider client={apolloClient}>
+                <ConnectionContext.Provider value={{ account: account, chainId: chainId }}>
+                  <ChainInfo />
+                </ConnectionContext.Provider>
+              </ApolloProvider>
             </div>
           )}
           <div className="w-full bg-gradient-to-br from-slate-100 to-slate-200 mt-10 p-6 font-dmsans tracking-tight text-slate-600">
