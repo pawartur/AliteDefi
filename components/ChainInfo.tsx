@@ -57,8 +57,8 @@ const ChainInfo = () => {
 
   const updateAllBalances = async () => {
     const fetchedBalances = await fetchAllBalances(
-      connectionInfo.account || "",
-      1,
+      connectionInfo.account || "", 
+      connectionInfo.chainId,
       ethPriceInUSD,
       erc20Transations,
       connectionInfo.library!
@@ -67,12 +67,12 @@ const ChainInfo = () => {
   }
 
   const updateERC20Transactions = async () => {
-    const fetchedTransactions = await fetchERC20Transactions(connectionInfo.account || "", 1)
+    const fetchedTransactions = await fetchERC20Transactions(connectionInfo.account || "", connectionInfo.chainId)
     setERC20Transations(fetchedTransactions)
   }
 
   const updateTransactions = async () => {
-    const fetchedTransactions = await fetchTransactions(connectionInfo.account || "", 1)
+    const fetchedTransactions = await fetchTransactions(connectionInfo.account || "", connectionInfo.chainId)
     setTransactions(fetchedTransactions)
   }
 

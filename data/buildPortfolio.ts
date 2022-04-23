@@ -33,6 +33,7 @@ export async function buildPortfolio(
     `
 
     let incomingTransactionValuesAtTheTimeOfTransaction: Number[] = []
+    console.log('incomingERC20Transactions', incommingERC20Transactions)
     const incomingValueQueries = incommingERC20Transactions.map((t) => {
         return uniswapClient.query({
             query: gql(latestTokenPriceQuery),
@@ -70,6 +71,7 @@ export async function buildPortfolio(
     })
 
     await Promise.all(incomingValueQueries)
+    console.log('incomingTransactionValuesAtTheTimeOfTransaction', incomingTransactionValuesAtTheTimeOfTransaction)
     const totalIncomingValueInUSD = incomingTransactionValuesAtTheTimeOfTransaction.reduce((acc, n) => {
         return acc + n;
     }, 0)
