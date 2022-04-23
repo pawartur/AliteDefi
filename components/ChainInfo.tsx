@@ -54,6 +54,7 @@ const ChainInfo = () => {
       erc20Transations,
       connectionInfo.library!
       )
+    console.log(fetchedBalances)
     setAllTokenBalances(fetchedBalances)
   }
 
