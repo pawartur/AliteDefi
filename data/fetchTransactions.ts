@@ -15,7 +15,7 @@ export async function fetchTransactions(
     const address = '0xaf23170856890340959529125Fb058A61Eb924b3'
     const response = await fetch(`${apiEndpoint}?module=${apiModule}&action=${apiAction}&address=${address}&startblock=0&endblock=99999999&page=1&offset=100&sort=asc&apikey=${apiKey}`)
     const data = await response.json()
-    if (data.result === 'Max rate limit reached, please use API Key for higher rate limit') {
+    if (typeof(data.result) === 'string') {
         // TODO: Add error handling that makes sense
         return []
     }

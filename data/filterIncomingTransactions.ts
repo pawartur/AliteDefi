@@ -10,6 +10,5 @@ export function filterIncomingTransactions(
             return transaction
         }
     })
-    console.log(incomingTransfers)
     return incomingTransfers
 }
