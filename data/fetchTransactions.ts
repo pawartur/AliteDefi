@@ -19,5 +19,6 @@ export async function fetchTransactions(
         // TODO: Add error handling that makes sense
         return []
     }
+    
     return data.result
 }
