@@ -11,6 +11,7 @@ import ConnectionContext from '../utils/ConnectionContext'
 import { ApolloProvider } from 'react-apollo'
 import ChainInfo from '../components/ChainInfo'
 import fetchAavePools from '../data/fetchAavePools'
+import fetchAavePositions from '../data/fetchAavePositions'
 import { ApolloClient } from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
@@ -36,7 +37,7 @@ const Home: NextPage = () => {
 
   const connectWallet = useCallback(async () => {
     console.log("connectWallet")
-    console.log(await fetchAavePools())
+    console.log(await fetchAavePositions())
     try {
       if (web3Modal) {
         const provider = await web3Modal.connect()
