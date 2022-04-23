@@ -38,7 +38,7 @@ const Home: NextPage = () => {
 
   const connectWallet = useCallback(async () => {
     console.log("connectWallet")
-    console.log(await fetchAavePositions())
+    console.log(await fetchAavePositions(''))
     try {
       if (web3Modal) {
         const provider = await web3Modal.connect()
@@ -117,13 +117,12 @@ const Home: NextPage = () => {
     fetchThePools()
   }, [account])
 
-  const renderAPYData = () => {
-    return (
-      <div>
-        
-      </div>
-    )
-  }
+  const renderedPoolData = (aavePoolsData ?? []).map((pool, i) => {
+    console.log(pool)
+    return (<div key={i}> APY: {pool.supplyAPY} </div>)
+  });
+
+  console.log('result', renderedPoolData)
 
   return (
     <div className="w-full bg-slate-800">
@@ -149,7 +148,7 @@ const Home: NextPage = () => {
           </div>
         ) : (
             <div>
-              {renderAPYData()}
+              {renderedPoolData}
               <div className="networkHandler">
                 <select placeholder="Select network" onChange={handleNetwork}>
                   <option value="1">Ethereum Mainnet</option>
