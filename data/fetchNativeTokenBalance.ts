@@ -20,5 +20,5 @@ export async function fetchNativeTokenBalance(
     }
     // TODO: Return balance in native chain token, but add better normalisation
     // This is for ETH, as etherscan balance is returned in wei (https://docs.etherscan.io/api-endpoints/accounts#get-ether-balance-for-a-single-address)
-    return (data.result / 1000000000000000000)
+    return data.result
 }
