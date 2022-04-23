@@ -65,17 +65,19 @@ export async function buildPortfolio(
         totalBalance += (Number(tokenBalance.amount) / Math.pow(10, tokenBalance.decimal)) * tokenBalance.priceInUSD
     })
 
-    const totalIncomingValueInUSD = (await Promise.all(incomingValueQueries))
-    incomingTransactionValuesAtTheTimeOfTransaction.reduce((acc, n) => {
+    await Promise.all(incomingValueQueries)
+    const totalIncomingValueInUSD = incomingTransactionValuesAtTheTimeOfTransaction.reduce((acc, n) => {
         return acc + n;
     }, 0)
 
-    const totalOutgoingValueInUSD = (await Promise.all(outgoingValueQueries))
-    outgoingTransactionValuesAtTheTimeOfTransaction.reduce((acc, n) => {
+    await Promise.all(outgoingValueQueries)
+    const totalOutgoingValueInUSD = outgoingTransactionValuesAtTheTimeOfTransaction.reduce((acc, n) => {
         return acc + n;
     }, 0)
 
     const overallGainLoss = totalBalance - totalIncomingValueInUSD + totalOutgoingValueInUSD
+    console.log('max balance', overallGainLoss, totalIncomingValueInUSD, totalOutgoingValueInUSD)
+    console.log('overallGainLoss', overallGainLoss)
     const overallGainLossPercentage = (overallGainLoss / totalBalance) * 100
 
     return {

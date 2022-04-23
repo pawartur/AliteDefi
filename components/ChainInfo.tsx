@@ -63,7 +63,7 @@ const ChainInfo = () => {
     setERC20Transations(fetchedTransactions)
   }
 
-  const updatePortfolio = () => {
+  const updatePortfolio = async () => {
     const incomingTransactions = filterIncomingTransactions(
       new String(connectionInfo.account),
       erc20Transations
@@ -73,7 +73,7 @@ const ChainInfo = () => {
       erc20Transations
     )
 
-    const portfolio = buildPortfolio(
+    const portfolio = await buildPortfolio(
       new String(connectionInfo.account),
       allTokenBalances,
       incomingTransactions,
@@ -95,6 +95,7 @@ const ChainInfo = () => {
   }, [allTokenBalances])
 
   const renderPortfolio = () => {
+    console.log('that portfolio', portfolio)
     return (
       <div className="portfolio flex pb-0 font-actor text-3xl font-semibold space-x-4">
         <div className="currency">Currency: {portfolio?.currency}</div>
