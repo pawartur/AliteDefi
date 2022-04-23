@@ -3,8 +3,8 @@ import { TokenBalance, Transaction } from "../@types/types";
 import { fetchERC20BalanceOf } from "./fetchERC20BalanceOf";
 import { fetchERC20Transactions } from "./fetchERC20Transactions";
 import { fetchNativeTokenBalance } from "./fetchNativeTokenBalance";
-
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+
 export async function fetchAllBalances(
     account: string,
     chainId: number,

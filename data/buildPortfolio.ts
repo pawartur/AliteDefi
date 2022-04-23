@@ -1,24 +1,48 @@
-import { 
+import {
     Portfolio,
     Currency,
-    Transaction, 
+    Transaction,
     TokenBalance
 } from "../@types/types";
 
-export function buildPortfolio(
+import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+
+export async function buildPortfolio(
     account: String,
     allTokenBalances: TokenBalance[],
     incommingERC20Transactions: Transaction[],
-): Portfolio {
-    let totalIncomingValueInUSD = 0
-    incommingERC20Transactions.forEach((transaction: Transaction) => {
-        // TODO: Store the list of supported stable coins somewhere (as we also use it e.g. in our call to Aave)
-        if (["USDC", "USDT", "DAI"].some((tokenSymbol: string) => {
-            return transaction.tokenSymbol === tokenSymbol
-        })) {
-            totalIncomingValueInUSD +=  (Number(transaction.value) / Math.pow(10, transaction.tokenDecimal))
-        }
+): Promise<Portfolio> {
+    const uniswapClient = new ApolloClient({
+        uri: "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2",
+        cache: new InMemoryCache()
     })
+    const latestTokenPriceQuery = `
+    query TransactionPriceData($address: String!, $timestamp: Int!) {
+        tokenDayDatas(where: {token: $address, date_lte: $timestamp}, orderBy: date, orderDirection: desc, first:1) {
+            date
+            token {
+              id
+              symbol
+            }
+            priceUSD
+          }
+    }
+    `
+    const valueQueries = incommingERC20Transactions.map((t) => {
+        return uniswapClient.query({
+            query: gql(latestTokenPriceQuery),
+            variables: {
+                timestamp: parseInt(t.timeStamp),
+                address: t.contractAddress,
+            }
+        });
+    });
+
+    const totalIncomingValueInUSD = (await Promise.all(valueQueries)).reduce((acc, n) => {
+        console.log('iter', n)
+        return acc + (n.data.tokenDayDatas[0]?.priceUSD ?? 0);
+    }, 0)
+    console.log('dem valiues', totalIncomingValueInUSD);
 
     let totalBalance = 0
     allTokenBalances.forEach((tokenBalance: TokenBalance) => {
@@ -30,7 +54,7 @@ export function buildPortfolio(
     console.log('totalBalance', totalBalance)
 
     const overallGainLoss = totalBalance - totalIncomingValueInUSD
-    const overallGainLossPercentage = (overallGainLoss/totalBalance)*100
+    const overallGainLossPercentage = (overallGainLoss / totalBalance) * 100
 
     return {
         currency: Currency.usd,
