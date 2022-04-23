@@ -5,13 +5,22 @@ import {
 } from "../@types/types";
 
 export function buildPortfolio(
+    account: String,
     balance: Number,
     transactions: Transaction[],
     balanceCurrencyPriceInPortfolioCurrency: Number,
     balanceCurrency: Currency,
     portFoliocurrency: Currency
 ): Portfolio {
-    console.log("ETH price in USD" + balanceCurrencyPriceInPortfolioCurrency)
+    
+    const incomingTransfers = transactions.filter((transaction: Transaction) => {
+        // if (transaction.to === account.toString()) {
+        if (transaction.to.toLocaleLowerCase() === '0xaf23170856890340959529125Fb058A61Eb924b3'.toLocaleLowerCase()) {
+            return transaction
+        }
+    })
+    console.log(incomingTransfers)
+
     return {
         currency: portFoliocurrency,
         balance: balance.valueOf(),
