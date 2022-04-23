@@ -23,6 +23,7 @@ import { apolloClient } from "../pages";
 import { filterIncomingTransactions } from "../data/filterIncomingTransactions";
 import { figureOutRequiredHistoricData } from "../data/figureOutRequiredHistoricData";
 import { fetchAllBalances } from "../data/fetchAllBalances";
+import { filterOutgoingTransactions } from "../data/filterOutgoingTransactions";
 
 const ETH_PRICE_QUERY = gql`
   query bundles {
@@ -67,13 +68,16 @@ const ChainInfo = () => {
       new String(connectionInfo.account),
       erc20Transations
     )
-    const requiredHistoricData = figureOutRequiredHistoricData(incomingTransactions)
-    console.log(requiredHistoricData)
-    console.log('allTokenBalances', allTokenBalances)
+    const outgoingTransactions = filterOutgoingTransactions(
+      new String(connectionInfo.account),
+      erc20Transations
+    )
+
     const portfolio = buildPortfolio(
       new String(connectionInfo.account),
       allTokenBalances,
-      incomingTransactions
+      incomingTransactions,
+      outgoingTransactions
     )
     setPortfolio(portfolio)
   }

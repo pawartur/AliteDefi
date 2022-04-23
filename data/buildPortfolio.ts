@@ -11,6 +11,7 @@ export async function buildPortfolio(
     account: String,
     allTokenBalances: TokenBalance[],
     incommingERC20Transactions: Transaction[],
+    outgoingERC20Transactions: Transaction[]
 ): Promise<Portfolio> {
     const uniswapClient = new ApolloClient({
         uri: "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2",
@@ -30,7 +31,7 @@ export async function buildPortfolio(
     `
 
     let incomingTransactionValuesAtTheTimeOfTransaction: Number[] = []
-    const valueQueries = incommingERC20Transactions.map((t) => {
+    const incomingValueQueries = incommingERC20Transactions.map((t) => {
         return uniswapClient.query({
             query: gql(latestTokenPriceQuery),
             variables: {
@@ -44,18 +45,37 @@ export async function buildPortfolio(
         });
     });
 
-    await Promise.all(valueQueries)
-    const totalIncomingValueInUSD = incomingTransactionValuesAtTheTimeOfTransaction.reduce((acc, n) => {
-        return acc + n;
-    }, 0)
-    console.log('total incoming value', totalIncomingValueInUSD);
+    let outgoingTransactionValuesAtTheTimeOfTransaction: Number[] = []
+    const outgoingValueQueries = outgoingERC20Transactions.map((t) => {
+        return uniswapClient.query({
+            query: gql(latestTokenPriceQuery),
+            variables: {
+                timestamp: parseInt(t.timeStamp),
+                address: t.contractAddress,
+            }
+        }).then(r => {
+            outgoingTransactionValuesAtTheTimeOfTransaction.push(
+                (Number(t.value) / Math.pow(10, t.tokenDecimal)) * (r.data.tokenDayDatas[0]?.priceUSD ?? 0)
+            )
+        });
+    });
 
     let totalBalance = 0
     allTokenBalances.forEach((tokenBalance: TokenBalance) => {
         totalBalance += (Number(tokenBalance.amount) / Math.pow(10, tokenBalance.decimal)) * tokenBalance.priceInUSD
     })
 
-    const overallGainLoss = totalBalance - totalIncomingValueInUSD
+    const totalIncomingValueInUSD = (await Promise.all(incomingValueQueries))
+    incomingTransactionValuesAtTheTimeOfTransaction.reduce((acc, n) => {
+        return acc + n;
+    }, 0)
+
+    const totalOutgoingValueInUSD = (await Promise.all(outgoingValueQueries))
+    outgoingTransactionValuesAtTheTimeOfTransaction.reduce((acc, n) => {
+        return acc + n;
+    }, 0)
+
+    const overallGainLoss = totalBalance - totalIncomingValueInUSD + totalOutgoingValueInUSD
     const overallGainLossPercentage = (overallGainLoss / totalBalance) * 100
 
     return {
