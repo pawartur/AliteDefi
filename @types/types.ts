@@ -3,11 +3,13 @@ export type Transaction = {
     transactionIndex: number;
     from: string;
     to: string;
+    tokenName: string;
+    tokenSymbol: string;
+    tokenDecimal: number;
     value: number;
     gas: number;
     gasUsed: number;
     gasPrice: number;
-    isError: boolean;
     contractAddress: string;
 };
 
