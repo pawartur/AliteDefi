@@ -1,6 +1,6 @@
 import { Transaction } from "../@types/types";
 
-export async function fetchERC20Transactions(
+export async function fetchTransactions(
     account: string, 
     chainId: number
 ): Promise<Transaction[]> {
@@ -10,7 +10,7 @@ export async function fetchERC20Transactions(
     }
     const apiEndpoint = process.env.NEXT_PUBLIC_ETHERSCAN_MAINNET_API_ENDPOINT
     const apiModule = 'account'
-    const apiAction = 'tokentx'
+    const apiAction = 'txlist'
     const apiKey = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY
     const response = await fetch(`${apiEndpoint}?module=${apiModule}&action=${apiAction}&address=${account}&startblock=0&endblock=99999999&page=1&offset=100&sort=asc&apikey=${apiKey}`)
     const data = await response.json()

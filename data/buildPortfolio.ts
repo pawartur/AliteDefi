@@ -46,6 +46,7 @@ export async function buildPortfolio(
     });
 
     let outgoingTransactionValuesAtTheTimeOfTransaction: Number[] = []
+    console.log('outgoingERC20Transactions', outgoingERC20Transactions)
     const outgoingValueQueries = outgoingERC20Transactions.map((t) => {
         return uniswapClient.query({
             query: gql(latestTokenPriceQuery),
@@ -59,6 +60,7 @@ export async function buildPortfolio(
             )
         });
     });
+    console.log('outgoingTransactionValuesAtTheTimeOfTransaction', outgoingTransactionValuesAtTheTimeOfTransaction)
 
     let totalBalance = 0
     allTokenBalances.forEach((tokenBalance: TokenBalance) => {
@@ -75,9 +77,10 @@ export async function buildPortfolio(
         return acc + n;
     }, 0)
 
+    console.log('totalBalance', totalBalance)
+    console.log('totalIncomingValueInUSD', totalIncomingValueInUSD)
+    console.log('totalOutgoingValueInUSD', totalOutgoingValueInUSD)
     const overallGainLoss = totalBalance - totalIncomingValueInUSD + totalOutgoingValueInUSD
-    console.log('max balance', overallGainLoss, totalIncomingValueInUSD, totalOutgoingValueInUSD)
-    console.log('overallGainLoss', overallGainLoss)
     const overallGainLossPercentage = (overallGainLoss / totalBalance) * 100
 
     return {

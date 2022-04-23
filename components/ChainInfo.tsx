@@ -24,6 +24,7 @@ import { filterIncomingTransactions } from "../data/filterIncomingTransactions";
 import { figureOutRequiredHistoricData } from "../data/figureOutRequiredHistoricData";
 import { fetchAllBalances } from "../data/fetchAllBalances";
 import { filterOutgoingTransactions } from "../data/filterOutgoingTransactions";
+import { fetchTransactions } from "../data/fetchTransactions";
 
 const ETH_PRICE_QUERY = gql`
   query bundles {
@@ -34,6 +35,7 @@ const ETH_PRICE_QUERY = gql`
 `
 const ChainInfo = () => {
   const connectionInfo = useContext(ConnectionContext);
+  const [transactions, setTransactions] = useState<Transaction[]>([])
   const [erc20Transations, setERC20Transations] = useState<Transaction[]>([])
   const [allTokenBalances, setAllTokenBalances] = useState<TokenBalance[]>([])
   const [portfolio, setPortfolio] = useState<Portfolio>()
@@ -58,19 +60,27 @@ const ChainInfo = () => {
     setAllTokenBalances(fetchedBalances)
   }
 
-  const updateTransactions = async () => {
+  const updateERC20Transactions = async () => {
     const fetchedTransactions = await fetchERC20Transactions(connectionInfo.account || "", 1)
     setERC20Transations(fetchedTransactions)
   }
 
+  const updateTransactions = async () => {
+    const fetchedTransactions = await fetchTransactions(connectionInfo.account || "", 1)
+    setTransactions(fetchedTransactions)
+  }
+
   const updatePortfolio = async () => {
+    let allTransactions = transactions
+    allTransactions.push(...erc20Transations)
+
     const incomingTransactions = filterIncomingTransactions(
       new String(connectionInfo.account),
-      erc20Transations
+      allTransactions
     )
     const outgoingTransactions = filterOutgoingTransactions(
       new String(connectionInfo.account),
-      erc20Transations
+      allTransactions
     )
 
     const portfolio = await buildPortfolio(
@@ -83,19 +93,22 @@ const ChainInfo = () => {
   }
 
   useEffect(() => {
-    updateTransactions()
+    updateERC20Transactions()
   }, [ethPriceInUSD])
 
   useEffect(() => {
-    updateAllBalances()
+    updateTransactions()
   }, [erc20Transations])
+
+  useEffect(() => {
+    updateAllBalances()
+  }, [transactions])
 
   useEffect(() => {
     updatePortfolio()
   }, [allTokenBalances])
 
   const renderPortfolio = () => {
-    console.log('that portfolio', portfolio)
     return (
       <div className="portfolio pb-0 font-actor text-3xl font-semibold space-x-4">
         <div className="currency text-lg">Currency: {portfolio?.currency}</div>

@@ -69,14 +69,10 @@ export async function fetchAllBalances(
             ).then((v) => { symbolToPrice[symbol] = v })
         )
     })
-    console.log('wat', valuedBalancePromises)
     let resolvedBalances = await Promise.all(balanceReqs)
     const latestPrices = await Promise.all(valuedBalancePromises)
-    console.log('balances', balances)
-    console.log('symbolToPrice', symbolToPrice)
     Object.keys(balances).forEach((tokenSymbol: string) => {
         if (balances[tokenSymbol] && symbolToPrice[tokenSymbol].data.tokenDayDatas.length > 0) {
-            console.log('trolololololo')
             result.push({
                 chainId: chainId,
                 symbol: tokenSymbol,
@@ -86,7 +82,5 @@ export async function fetchAllBalances(
             })
         }
     })
-
-    console.log('prices', symbolToPrice)
     return result;
 }
