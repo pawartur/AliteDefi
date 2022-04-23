@@ -132,15 +132,15 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="w-full mx-auto h-screen max-w-screen-xl bg-gradient-to-br from-slate-300 to-slate-400 p-6 font-dmsans tracking-tight text-slate-600">
-        <div className="flex items-center justify-between">
-          <img className="h-24" src="img/logo.png"></img>
-          <div>{`Network ID: ${chainId ? chainId : "No Network"}`}</div>
-        </div>
+      <main className="w-full mx-auto h-screen max-w-screen-xl bg-gradient-to-br from-slate-300 to-slate-400 font-dmsans tracking-tight text-slate-600">
+
 
 
         {!account ? (
           <div className="accountManagement">
+            <div className="flex items-center justify-between w-full p-6">
+              <img className="h-24" src="img/logo.png"></img>
+            </div>
             <div className="text-5xl font-bold capitalize leading-tight tracking-tighter text-center">
               Multichain crypto &<br />
               stablecoins portfolio tracking
@@ -185,17 +185,20 @@ const Home: NextPage = () => {
           </div>
         ) : (
             <div>
-              <div className="networkHandler flex items-center justify-between">
-                <div className="">
-                  <select className="p-4 rounded-full" placeholder="Select network" onChange={handleNetwork}>
-                    <option value="1">Ethereum Mainnet</option>
-                    <option value="42">Ethereum Kovan</option>
-                    <option value="137">Polygon</option>
-                  </select>
-                  <button className="p-2" onClick={switchNetwork}>Switch Network</button>
-                </div>
-                <div className="accountManagement">
-                  <button onClick={disconnect}>Disconnect</button>
+              <div className="flex items-center justify-between w-full p-6">
+                <img className="h-24" src="img/logo.png"></img>
+                <div className="networkHandler flex items-center justify-between">
+                  <div className="">
+                    <select className="p-4 rounded-full" placeholder="Select network" onChange={handleNetwork}>
+                      <option value="1">Ethereum Mainnet</option>
+                      <option value="42">Ethereum Kovan</option>
+                      <option value="137">Polygon</option>
+                    </select>
+                    <button className="p-2" onClick={switchNetwork}>Switch Network</button>
+                  </div>
+                  <div className="accountManagement">
+                    <button onClick={disconnect}>Disconnect</button>
+                  </div>
                 </div>
               </div>
 
@@ -204,7 +207,55 @@ const Home: NextPage = () => {
                   <ChainInfo />
                 </ConnectionContext.Provider>
               </ApolloProvider>
-              {renderedPoolData}
+              <div className="flex items-center justify-between mt-10 p-2">
+                <div>
+                  <div className="pl-6 font-dmsans text-xl font-semibold">Cryptocurrency</div>
+                  <div className="pl-6 font-dmsans text-sm text-white">How much money do you waste?</div>
+                </div>
+                <div>
+                  <div className="pb-0 font-actor text-xl font-semibold">$ 2,234.0123</div>
+                  <div className="pl-2 text-sm text-slate-100">Cryptocurrency</div>
+                </div>
+              </div>
+              <div className="justify-between space-x-2 p-6 font-dmsans md:flex">
+                <div className="ml-2 w-full space-y-2 md:ml-0 md:w-1/3">
+                  <div className="text-sm font-semibold uppercase">Money doing nothing</div>
+                  <div className="rounded-md border bg-red-600 p-2 text-white ring-2 ring-red-600 ring-offset-2">
+                    <div className="text-sm">ETH</div>
+                    <div className="font-actor font-bold">$ 3063</div>
+                    <div className="font-actor text-xs">Medium purchase price: $ 3456</div>
+                    <div className="text-xs">Wallet 0x213[..]</div>
+                  </div>
+                  <div className="rounded-md border p-2">
+                    <div className="text-sm">Matic</div>
+                    <div className="font-actor font-bold">$ 2608</div>
+                    <div className="text-xs">Wallet 0x213[..]</div>
+                  </div>
+                </div>
+                <div className="flex-1 space-y-2">
+                  <div className="text-sm font-semibold uppercase">Money earning yield</div>
+                  <div className="rounded-md border p-2">
+                    {renderedPoolData}
+                    <div className="text-sm">Deposit to Sushiswap</div>
+                    <div className="font-actor font-bold">3.4% APY</div>
+                    <div className="text-xs">Sushiswap is a liquidity pool. Read more.</div>
+                  </div>
+                  <div className="rounded-md border p-2">
+                    <div className="text-sm">Deposit to Uniswap</div>
+                    <div className="font-actor font-bold">2.8% APY</div>
+                    <div className="text-xs">Uniswap is a liquidity pool. Read more.</div>
+                  </div>
+                </div>
+                <div className="w-full space-y-2 md:w-1/3">
+                  <div className="text-sm font-semibold uppercase">Money earning yield & rewards</div>
+                  <div className="rounded-md border bg-green-200 p-2 ring-2 ring-green-700 ring-offset-2">
+                    <div className="font-actor text-sm">Locked: $ 1254</div>
+                    <div className="font-actor font-semibold">Earned: $ 12.02030321</div>
+                    <div className="text-xs">Withdraw money</div>
+                  </div>
+                </div>
+              </div>
+
 
             </div>
           )}
