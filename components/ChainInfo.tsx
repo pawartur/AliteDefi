@@ -23,15 +23,26 @@ const ChainInfo = () => {
     updateTransactions()
   }, [])
 
+  const renderTransaction = (transaction: Transaction) => {
+    return (
+      <p className="transaction">from {transaction.from} to {transaction.to}</p>
+    )
+  }
+
+  const renderTransactions = () => {
+    return (
+      <div className="transactions">
+        {transations.map((transaction: Transaction) => {
+          return renderTransaction(transaction)
+        })}
+      </div>
+    )
+  }
+
   return (
     <div>
-        Address {connectionInfo.account}
-        {transations.map((transaction: Transaction) => {
-          <div>
-            <p>{transaction.from}</p>
-            <p>{transaction.to}</p>
-          </div>
-        })}
+        <p className="accountInfo">Address {connectionInfo.account}</p>
+        {renderTransactions()}
     </div>
   )
 }

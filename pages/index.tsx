@@ -1,17 +1,14 @@
 import type { NextPage } from 'next'
 import React, { useEffect, useState, useCallback } from "react";
 import Head from 'next/head'
-import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import { ethers } from "ethers"
 import Web3Modal from "web3modal"
 import { providerOptions } from "../utils/providerOptions"
 import { toHex } from '../utils/toHex'
 import { networkParams } from '../utils/networkParams'
-import { truncateAddress } from '../utils/truncateAddress'
-import { Web3Provider } from 'walletlink/dist/provider/Web3Provider'
 import ConnectionContext from '../utils/ConnectionContext'
-import ChainInfo from './ChainInfo'
+import ChainInfo from '../components/ChainInfo'
 import fetchAavePools from '../data/fetchAavePools'
 
 const Home: NextPage = () => {
