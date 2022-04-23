@@ -4,6 +4,7 @@ import { fetchERC20BalanceOf } from "./fetchERC20BalanceOf";
 import { fetchERC20Transactions } from "./fetchERC20Transactions";
 import { fetchNativeTokenBalance } from "./fetchNativeTokenBalance";
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+import { chainIdToUniswapSubgraph } from "../utils/networkParams";
 
 export async function fetchAllBalances(
     account: string,
@@ -40,7 +41,7 @@ export async function fetchAllBalances(
         }
     })
     const uniswapClient = new ApolloClient({
-        uri: "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2",
+        uri: chainIdToUniswapSubgraph[chainId],
         cache: new InMemoryCache()
     })
     const latestTokenPriceQuery = `

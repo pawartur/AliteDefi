@@ -114,7 +114,6 @@ const Home: NextPage = () => {
     if (chainId !== undefined) {
       const fetchThePools = async () => {
         const aavePoolData = await fetchAavePools(chainId)
-        // console.log(await fetchCreamPools(chainId))
         setAaavePoolsData(aavePoolData)
       }
       fetchThePools()

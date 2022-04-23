@@ -27,3 +27,8 @@ export const chainIdToCreamDataURL = {
   1: 'https://api.cream.finance/api/v1/rates?comptroller=eth',
   137: 'https://api.cream.finance/api/v1/rates?comptroller=polygon'
 }
+
+export const chainIdToUniswapSubgraph = {
+  1: 'https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2',
+  137: 'https://api.thegraph.com/subgraphs/name/zephyrys/uniswap-polygon-but-it-works',
+}
