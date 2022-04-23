@@ -42,7 +42,7 @@ export async function buildPortfolio(
             }
         }).then(r => {
             incomingTransactionValuesAtTheTimeOfTransaction.push(
-                (Number(t.value) / Math.pow(10, t.tokenDecimal)) * (r.data.tokenDayDatas[0]?.priceUSD ?? 0)
+                (Number(t.value) / Math.pow(10, t.tokenDecimal ?? 18)) * (r.data.tokenDayDatas[0]?.priceUSD ?? 0)
             )
         });
     });
@@ -58,7 +58,7 @@ export async function buildPortfolio(
             }
         }).then(r => {
             outgoingTransactionValuesAtTheTimeOfTransaction.push(
-                (Number(t.value) / Math.pow(10, t.tokenDecimal)) * (r.data.tokenDayDatas[0]?.priceUSD ?? 0)
+                (Number(t.value) / Math.pow(10, t.tokenDecimal ?? 18)) * (r.data.tokenDayDatas[0]?.priceUSD ?? 0)
             )
         });
     });
