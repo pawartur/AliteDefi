@@ -85,6 +85,7 @@ const ChainInfo = () => {
 
     const portfolio = await buildPortfolio(
       new String(connectionInfo.account),
+      connectionInfo.chainId,
       allTokenBalances,
       incomingTransactions,
       outgoingTransactions

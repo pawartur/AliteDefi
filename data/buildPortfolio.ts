@@ -6,15 +6,17 @@ import {
 } from "../@types/types";
 
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
+import { chainIdToUniswapSubgraph } from "../utils/networkParams";
 
 export async function buildPortfolio(
     account: String,
+    chainId: Number, 
     allTokenBalances: TokenBalance[],
     incommingERC20Transactions: Transaction[],
     outgoingERC20Transactions: Transaction[]
 ): Promise<Portfolio> {
     const uniswapClient = new ApolloClient({
-        uri: "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v2",
+        uri: chainIdToUniswapSubgraph[chainId],
         cache: new InMemoryCache()
     })
     const latestTokenPriceQuery = `
