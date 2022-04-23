@@ -12,6 +12,7 @@ import { ApolloProvider } from 'react-apollo'
 import ChainInfo from '../components/ChainInfo'
 import fetchAavePools from '../data/fetchAavePools'
 import fetchAavePositions from '../data/fetchAavePositions'
+import fetchCreamPools from '../data/fetchCreamPools'
 import { ApolloClient } from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
@@ -38,7 +39,7 @@ const Home: NextPage = () => {
 
   const connectWallet = useCallback(async () => {
     console.log("connectWallet")
-    console.log(await fetchAavePositions(''))
+    console.log(await fetchCreamPools())
     try {
       if (web3Modal) {
         const provider = await web3Modal.connect()
@@ -118,11 +119,8 @@ const Home: NextPage = () => {
   }, [account])
 
   const renderedPoolData = (aavePoolsData ?? []).map((pool, i) => {
-    console.log(pool)
     return (<div key={i}> APY: {pool.supplyAPY} </div>)
   });
-
-  console.log('result', renderedPoolData)
 
   return (
     <div className="w-full bg-slate-800">

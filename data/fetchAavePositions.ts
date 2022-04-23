@@ -38,10 +38,7 @@ export default async function fetchAavePositions(account: string): Promise<any> 
     query: gql(userReservesQuery)
   })
 
-  console.log(userReservesData);
-
   const userReserves = userReservesData.data.userReserves.map(userReserve => {
-    console.log('wat', userReserve.reserve)
     return {
       ...userReserve,
       underlyingAsset: userReserve.reserve.underlyingAsset,
@@ -64,7 +61,6 @@ export default async function fetchAavePositions(account: string): Promise<any> 
 
   const formattedReserves = await fetchAavePools();
 
-  console.log('dank', userReserves);
   // Docs: https://github.com/aave/aave-utilities#subgraph
   return formatUserSummary({
     currentTimestamp,
