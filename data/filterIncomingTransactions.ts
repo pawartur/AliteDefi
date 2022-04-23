@@ -6,7 +6,7 @@ export function filterIncomingTransactions(
 ): Transaction[] {
     const incomingTransfers = transactions.filter((transaction: Transaction) => {
         // if (transaction.to === account.toString()) {
-        if (transaction.to.toLocaleLowerCase() === '0xaf23170856890340959529125Fb058A61Eb924b3'.toLocaleLowerCase()) {
+        if (transaction.to.toLocaleLowerCase() === account.toLocaleLowerCase()) {
             return transaction
         }
     })
