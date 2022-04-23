@@ -39,7 +39,9 @@ const ChainInfo = () => {
       client:apolloClient,
     })
 
+  
   const ethPriceInUSD = ethPriceData && ethPriceData.bundles[0].ethPrice
+
   const renderEthPrice = () => {
     return (
       <div className="priceData">
@@ -49,7 +51,7 @@ const ChainInfo = () => {
             ? 'Loading token data...'
             : '$' +
               // parse responses as floats and fix to 2 decimals
-              parseFloat(ethPriceInUSD).toFixed(2)}
+              parseFloat(ethPriceInUSD.toString()).toFixed(2)}
         </div>
       </div>
     )
@@ -69,6 +71,7 @@ const ChainInfo = () => {
     const portfolio = buildPortfolio(
       balance,
       transations,
+      ethPriceInUSD,
       Currency.eth,
       Currency.usd
     )

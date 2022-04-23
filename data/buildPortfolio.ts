@@ -7,9 +7,11 @@ import {
 export function buildPortfolio(
     balance: Number,
     transactions: Transaction[],
+    balanceCurrencyPriceInPortfolioCurrency: Number,
     balanceCurrency: Currency,
     portFoliocurrency: Currency
 ): Portfolio {
+    console.log("ETH price in USD" + balanceCurrencyPriceInPortfolioCurrency)
     return {
         currency: portFoliocurrency,
         balance: balance.valueOf(),
