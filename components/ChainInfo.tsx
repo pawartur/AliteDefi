@@ -148,16 +148,6 @@ const ChainInfo = () => {
           <div className="gainLoss text-lg">Profit/loss: ${portfolio?.overallGainLoss}</div>
           <div className="gainLossPercentage text-lg">Profit/loss: {portfolio?.overallGainLossPercentage}%</div>
         </div>
-        <div className="flex items-center justify-between mt-10 p-2">
-          <div>
-            <div className="pl-6 font-dmsans text-xl font-semibold">Cryptocurrency</div>
-            <div className="pl-6 font-dmsans text-sm text-white">How much money do you waste?</div>
-          </div>
-          <div>
-            <div className="pb-0 font-actor text-xl font-semibold">$ 2,234.0123</div>
-            <div className="pl-2 text-sm text-slate-100">Cryptocurrency</div>
-          </div>
-        </div>
         <div className="justify-between space-x-2 p-6 font-dmsans md:flex">
           <div className="ml-2 w-full space-y-2 md:ml-0 md:w-1/3">
             <div className="text-sm font-semibold uppercase">Money doing nothing</div>
@@ -166,13 +156,11 @@ const ChainInfo = () => {
           <div className="flex-1 space-y-2">
             <div className="text-sm font-semibold uppercase">Money earning yield</div>
             <div className="rounded-md border p-2">
-              <div className="text-sm">Lend on Aave</div>
-              <div className="text-xs">Aave is a lending protocol. <a href="https://aave.com/">Read more</a></div>
+              <div className="text-sm">Lend on Aave (<a href="https://aave.com/">Read more</a>)</div>
               {renderedAavePoolData}
             </div>
             <div className="rounded-md border p-2">
-              <div className="text-sm">Lend on Cream</div>
-              <div className="text-xs">Cream is a lending protocol. <a href="https://app.cream.finance/">Read more</a></div>
+              <div className="text-sm">Lend on Cream (<a href="https://app.cream.finance/">Read more</a>)</div>
               {renderedCreamPoolData}
             </div>
             <div className="rounded-md border p-2">
