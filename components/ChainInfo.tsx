@@ -128,11 +128,11 @@ const ChainInfo = () => {
   }, [connectionInfo.account, connectionInfo.chainId])
 
   const renderedAavePoolData = (aavePoolsData ?? []).map((pool, i) => {
-    return (<div key={i}> Lend {pool.symbol} yielding {pool.supplyAPY} APY</div>)
+    return (<div className="text-lg" key={i}> Lend {pool.symbol} yielding {Number(pool.supplyAPY).toFixed(3) * 100}% APY</div>)
   });
 
   const renderedCreamPoolData = (creamPoolsData ?? []).map((pool, i) => {
-    return (<div key={i}> Lend {pool.tokenSymbol} yielding {pool.apy} APY</div>)
+    return (<div className="text-lg" key={i}> Lend {pool.tokenSymbol} yielding {pool.apy} APY</div>)
   });
 
   const renderedBalances = allTokenBalances.map((balance, i) => {
