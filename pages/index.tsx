@@ -10,10 +10,6 @@ import { networkParams } from '../utils/networkParams'
 import ConnectionContext from '../utils/ConnectionContext'
 import { ApolloProvider } from 'react-apollo'
 import ChainInfo from '../components/ChainInfo'
-import fetchAavePools from '../data/fetchAavePools'
-import fetchAavePositions from '../data/fetchAavePositions'
-import fetchCreamPools from '../data/fetchCreamPools'
-import fetchCreamPositions from '../data/fetchCreamPositions'
 import { ApolloClient } from 'apollo-client'
 import { InMemoryCache } from 'apollo-cache-inmemory'
 import { HttpLink } from 'apollo-link-http'
@@ -30,7 +26,6 @@ const Home: NextPage = () => {
   const [library, setLibrary] = useState<ethers.providers.Web3Provider>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [account, setAccount] = useState<string>()
-  const [aavePoolsData, setAaavePoolsData] = useState()
   const [signature, setSignature] = useState("")
   const [error, setError] = useState("")
   const [chainId, setChainId] = useState<Number>()
@@ -109,20 +104,6 @@ const Home: NextPage = () => {
       setWeb3Modal(web3Modal)
     }
   }, [connectWallet, web3Modal]);
-
-  useEffect(() => {
-    if (chainId !== undefined) {
-      const fetchThePools = async () => {
-        const aavePoolData = await fetchAavePools(chainId)
-        setAaavePoolsData(aavePoolData)
-      }
-      fetchThePools()
-    }
-  }, [account, chainId])
-
-  const renderedPoolData = (aavePoolsData ?? []).map((pool, i) => {
-    return (<div key={i}> APY: {pool.supplyAPY} </div>)
-  });
 
   return (
     <div className="w-full bg-slate-800">
@@ -207,60 +188,8 @@ const Home: NextPage = () => {
                   <ChainInfo />
                 </ConnectionContext.Provider>
               </ApolloProvider>
-              <div className="flex items-center justify-between mt-10 p-2">
-                <div>
-                  <div className="pl-6 font-dmsans text-xl font-semibold">Cryptocurrency</div>
-                  <div className="pl-6 font-dmsans text-sm text-white">How much money do you waste?</div>
-                </div>
-                <div>
-                  <div className="pb-0 font-actor text-xl font-semibold">$ 2,234.0123</div>
-                  <div className="pl-2 text-sm text-slate-100">Cryptocurrency</div>
-                </div>
               </div>
-              <div className="justify-between space-x-2 p-6 font-dmsans md:flex">
-                <div className="ml-2 w-full space-y-2 md:ml-0 md:w-1/3">
-                  <div className="text-sm font-semibold uppercase">Money doing nothing</div>
-                  <div className="rounded-md border bg-red-600 p-2 text-white ring-2 ring-red-600 ring-offset-2">
-                    <div className="text-sm">ETH</div>
-                    <div className="font-actor font-bold">$ 3063</div>
-                    <div className="font-actor text-xs">Medium purchase price: $ 3456</div>
-                    <div className="text-xs">Wallet 0x213[..]</div>
-                  </div>
-                  <div className="rounded-md border p-2">
-                    <div className="text-sm">Matic</div>
-                    <div className="font-actor font-bold">$ 2608</div>
-                    <div className="text-xs">Wallet 0x213[..]</div>
-                  </div>
-                </div>
-                <div className="flex-1 space-y-2">
-                  <div className="text-sm font-semibold uppercase">Money earning yield</div>
-                  <div className="rounded-md border p-2">
-                    {renderedPoolData}
-                    <div className="text-sm">Deposit to Sushiswap</div>
-                    <div className="font-actor font-bold">3.4% APY</div>
-                    <div className="text-xs">Sushiswap is a liquidity pool. Read more.</div>
-                  </div>
-                  <div className="rounded-md border p-2">
-                    <div className="text-sm">Deposit to Uniswap</div>
-                    <div className="font-actor font-bold">2.8% APY</div>
-                    <div className="text-xs">Uniswap is a liquidity pool. Read more.</div>
-                  </div>
-                </div>
-                <div className="w-full space-y-2 md:w-1/3">
-                  <div className="text-sm font-semibold uppercase">Money earning yield & rewards</div>
-                  <div className="rounded-md border bg-green-200 p-2 ring-2 ring-green-700 ring-offset-2">
-                    <div className="font-actor text-sm">Locked: $ 1254</div>
-                    <div className="font-actor font-semibold">Earned: $ 12.02030321</div>
-                    <div className="text-xs">Withdraw money</div>
-                  </div>
-                </div>
-              </div>
-
-
-            </div>
           )}
-
-
       </main>
 
       <footer className="p-6 w-full text-center text-slate-200">
