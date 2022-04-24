@@ -166,13 +166,11 @@ const ChainInfo = () => {
           <div className="flex-1 space-y-2">
             <div className="text-sm font-semibold uppercase">Money earning yield</div>
             <div className="rounded-md border p-2">
-              <div className="text-sm">Lend on Aave</div>
-              <div className="text-xs">Aave is a lending protocol. <a href="https://aave.com/">Read more</a></div>
+              <div className="text-sm">Lend on Aave (<a href="https://aave.com/">Read more</a>)</div>
               {renderedAavePoolData}
             </div>
             <div className="rounded-md border p-2">
-              <div className="text-sm">Lend on Cream</div>
-              <div className="text-xs">Cream is a lending protocol. <a href="https://app.cream.finance/">Read more</a></div>
+              <div className="text-sm">Lend on Cream (<a href="https://app.cream.finance/">Read more</a>)</div>
               {renderedCreamPoolData}
             </div>
             <div className="rounded-md border p-2">
