@@ -158,11 +158,6 @@ const ChainInfo = () => {
           <div className="ml-2 w-full space-y-2 md:ml-0 md:w-1/3">
             <div className="text-sm font-semibold uppercase">Money doing nothing</div>
             {renderedBalances}
-            <div className="rounded-md border p-2">
-              <div className="text-sm">Matic</div>
-              <div className="font-actor font-bold">$ 2608</div>
-              <div className="text-xs">Wallet 0x213[..]</div>
-            </div>
           </div>
           <div className="flex-1 space-y-2">
             <div className="text-sm font-semibold uppercase">Money earning yield</div>
