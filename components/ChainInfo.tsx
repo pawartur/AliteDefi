@@ -173,7 +173,7 @@ const ChainInfo = () => {
             <div className="text-sm font-semibold uppercase">Money earning yield & rewards</div>
             <div className="rounded-md border bg-green-200 p-2 ring-2 ring-green-700 ring-offset-2">
               <div className="font-actor text-sm">Locked: $ 1254</div>
-              <div className="font-actor font-semibold">Earned: $ 12.02030321</div>
+              <div className="font-actor text-lg font-semibold">Earned: $ 12.02030321</div>
               <div className="text-xs">Withdraw money</div>
             </div>
           </div>
