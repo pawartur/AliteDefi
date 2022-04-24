@@ -132,7 +132,7 @@ const ChainInfo = () => {
   });
 
   const renderedCreamPoolData = (creamPoolsData ?? []).map((pool, i) => {
-    return (<div className="text-lg" key={i}> Lend {pool.tokenSymbol} yielding {pool.apy} APY</div>)
+    return (<div className="text-lg" key={i}> Lend {pool.tokenSymbol} yielding {Number(pool.apy).toFixed(3) *100}% APY</div>)
   });
 
   const renderedBalances = allTokenBalances.map((balance, i) => {
