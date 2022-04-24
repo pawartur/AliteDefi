@@ -5,7 +5,7 @@ export default async function fetchCreamPools(chainId: Number | undefined): Prom
     return [];
   }
 
-  const stableSymbols = ["USDT", "USDC", "DAI"]
+  const stableSymbols = ["ETH", "USDC", "DAI", "MATIC"]
 
   const poolData = await (await fetch(chainIdToCreamDataURL[chainId])).json()
 

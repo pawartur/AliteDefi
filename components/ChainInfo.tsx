@@ -45,6 +45,7 @@ const ChainInfo = () => {
   const [allTokenBalances, setAllTokenBalances] = useState<TokenBalance[]>([])
   const [portfolio, setPortfolio] = useState<Portfolio>()
   const [aavePoolsData, setAaavePoolsData] = useState()
+  const [creamPoolsData, setCreamPoolsData] = useState()
 
   const { loading: ethLoading, data: ethPriceData } = useQuery(
     ETH_PRICE_QUERY,
@@ -53,7 +54,6 @@ const ChainInfo = () => {
     })
 
   const ethPriceInUSD = ethPriceData && ethPriceData.bundles[0].ethPrice
-  //parseFloat(ethPriceInUSD.toString()).toFixed(2)}  
 
   const updateAllBalances = async () => {
     const fetchedBalances = await fetchAllBalances(
@@ -119,17 +119,21 @@ const ChainInfo = () => {
     if (connectionInfo.chainId !== undefined) {
       const fetchThePools = async () => {
         const aavePoolData = await fetchAavePools(connectionInfo.chainId)
+        const creamPoolData = await fetchCreamPools(connectionInfo.chainId)
         setAaavePoolsData(aavePoolData)
+        setCreamPoolsData(creamPoolData)
       }
       fetchThePools()
     }
   }, [connectionInfo.account, connectionInfo.chainId])
 
-  const renderedPoolData = (aavePoolsData ?? []).map((pool, i) => {
-    return (<div key={i}> APY: {pool.supplyAPY} </div>)
+  const renderedAavePoolData = (aavePoolsData ?? []).map((pool, i) => {
+    return (<div key={i}> Lend {pool.symbol} yielding {pool.supplyAPY} APY</div>)
   });
 
-  console.log('balances', allTokenBalances)
+  const renderedCreamPoolData = (creamPoolsData ?? []).map((pool, i) => {
+    return (<div key={i}> Lend {pool.tokenSymbol} yielding {pool.apy} APY</div>)
+  });
 
   const renderedBalances = allTokenBalances.map((balance, i) => {
     return (<CoinInfo key={i} {...balance}></CoinInfo>)
@@ -162,15 +166,19 @@ const ChainInfo = () => {
           <div className="flex-1 space-y-2">
             <div className="text-sm font-semibold uppercase">Money earning yield</div>
             <div className="rounded-md border p-2">
-              {renderedPoolData}
-              <div className="text-sm">Deposit to Sushiswap</div>
-              <div className="font-actor font-bold">3.4% APY</div>
-              <div className="text-xs">Sushiswap is a liquidity pool. Read more.</div>
+              <div className="text-sm">Lend on Aave</div>
+              <div className="text-xs">Aave is a lending protocol. <a href="https://aave.com/">Read more</a></div>
+              {renderedAavePoolData}
+            </div>
+            <div className="rounded-md border p-2">
+              <div className="text-sm">Lend on Cream</div>
+              <div className="text-xs">Cream is a lending protocol. <a href="https://app.cream.finance/">Read more</a></div>
+              {renderedCreamPoolData}
             </div>
             <div className="rounded-md border p-2">
               <div className="text-sm">Deposit to Uniswap</div>
+              <div className="text-xs">Uniswap is a liquidity pool. <a href="https://uniswap.org/">Read more.</a></div>
               <div className="font-actor font-bold">2.8% APY</div>
-              <div className="text-xs">Uniswap is a liquidity pool. Read more.</div>
             </div>
           </div>
           <div className="w-full space-y-2 md:w-1/3">
