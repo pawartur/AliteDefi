@@ -33,6 +33,7 @@ export async function fetchAllBalances(
             symbolToAddr[transaction.tokenSymbol] = transaction.contractAddress
             decimalPlaces[transaction.tokenSymbol] = transaction.tokenDecimal
             symbolCache.add(transaction.tokenSymbol)
+            console.log('transaction', transaction)
             balanceReqs.push(fetchERC20BalanceOf(
                 account,
                 provider,
