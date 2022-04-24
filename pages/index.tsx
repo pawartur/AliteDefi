@@ -171,9 +171,9 @@ const Home: NextPage = () => {
                 <div className="networkHandler flex items-center justify-between">
                   <div className="">
                     <select className="p-4 rounded-full" placeholder="Select network" onChange={handleNetwork}>
-                      <option value="1">Ethereum Mainnet</option>
-                      <option value="42">Ethereum Kovan</option>
-                      <option value="137">Polygon</option>
+                      <option value="1" selected={chainId === 1}>Ethereum Mainnet</option>
+                      <option value="42" selected={chainId === 42}>Ethereum Kovan</option>
+                      <option value="137" selected={chainId === 137}>Polygon</option>
                     </select>
                     <button className="p-2" onClick={switchNetwork}>Switch Network</button>
                   </div>
