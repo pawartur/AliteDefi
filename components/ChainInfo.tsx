@@ -29,6 +29,7 @@ import fetchAavePools from '../data/fetchAavePools'
 import fetchAavePositions from '../data/fetchAavePositions'
 import fetchCreamPools from '../data/fetchCreamPools'
 import fetchCreamPositions from '../data/fetchCreamPositions'
+import CoinInfo from './CoinInfo'
 
 const ETH_PRICE_QUERY = gql`
   query bundles {
@@ -128,6 +129,12 @@ const ChainInfo = () => {
     return (<div key={i}> APY: {pool.supplyAPY} </div>)
   });
 
+  console.log('balances', allTokenBalances)
+
+  const renderedBalances = allTokenBalances.map((balance, i) => {
+    return (<CoinInfo key={i} {...balance}></CoinInfo>)
+  })
+
   const renderPortfolio = () => {
     return (
       <div className="portfolio pb-0 font-actor text-3xl font-semibold space-x-4">
@@ -150,12 +157,7 @@ const ChainInfo = () => {
         <div className="justify-between space-x-2 p-6 font-dmsans md:flex">
           <div className="ml-2 w-full space-y-2 md:ml-0 md:w-1/3">
             <div className="text-sm font-semibold uppercase">Money doing nothing</div>
-            <div className="rounded-md border bg-red-600 p-2 text-white ring-2 ring-red-600 ring-offset-2">
-              <div className="text-sm">ETH</div>
-              <div className="font-actor font-bold">$ 3063</div>
-              <div className="font-actor text-xs">Medium purchase price: $ 3456</div>
-              <div className="text-xs">Wallet 0x213[..]</div>
-            </div>
+            {renderedBalances}
             <div className="rounded-md border p-2">
               <div className="text-sm">Matic</div>
               <div className="font-actor font-bold">$ 2608</div>
