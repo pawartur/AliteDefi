@@ -13,7 +13,7 @@ export default async function fetchAavePools(chainId: Number): Promise<any> {
   // All queries against polygon V2
   const stableCoinPoolQuery = `
   query AavePools {
-    reserves(where: {symbol_in: ["USDC", "DAI", "ETH"]}) {
+    reserves(where: {symbol_in: ["USDC", "DAI", "WETH"]}) {
     id
     symbol
     name
