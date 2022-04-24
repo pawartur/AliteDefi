@@ -113,7 +113,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="w-full mx-auto h-screen max-w-screen-xl bg-gradient-to-br from-slate-300 to-slate-400 font-dmsans tracking-tight text-slate-600">
+      <main className="w-full mx-auto min-h-screen max-w-screen-xl bg-gradient-to-br from-slate-300 to-slate-400 font-dmsans tracking-tight text-slate-600">
 
 
 
