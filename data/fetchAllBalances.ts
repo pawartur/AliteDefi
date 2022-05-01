@@ -9,10 +9,27 @@ import { chainIdToUniswapSubgraph } from "../utils/networkParams";
 export async function fetchAllBalances(
     account: string,
     chainId: number,
-    nativeTokenPriceInUSD: number,
     erc20Transactions: Transaction[],
     provider: ethers.providers.Web3Provider
 ): Promise<TokenBalance[]> {
+    const uniswapClient = new ApolloClient({
+        uri: chainIdToUniswapSubgraph[chainId],
+        cache: new InMemoryCache()
+    })
+
+    const ETH_PRICE_QUERY = gql`
+        query bundles {
+            bundles(where: { id: "1" }) {
+            ethPrice
+            }
+        }
+    `
+    const ethPriceData = await uniswapClient.query({
+        query: ETH_PRICE_QUERY
+    })
+    const nativeTokenPriceInUSD = ethPriceData.data.bundles[0].ethPrice
+    console.log('nativeTokenPriceInUSD', nativeTokenPriceInUSD)
+
     let result: TokenBalance[] = []
     const nativeTokenAmount = await provider.getBalance(account)
     result.push({
@@ -33,17 +50,12 @@ export async function fetchAllBalances(
             symbolToAddr[transaction.tokenSymbol] = transaction.contractAddress
             decimalPlaces[transaction.tokenSymbol] = transaction.tokenDecimal
             symbolCache.add(transaction.tokenSymbol)
-            console.log('transaction', transaction)
             balanceReqs.push(fetchERC20BalanceOf(
                 account,
                 provider,
                 transaction.contractAddress
             ).then((v) => balances[transaction.tokenSymbol] = v))
         }
-    })
-    const uniswapClient = new ApolloClient({
-        uri: chainIdToUniswapSubgraph[chainId],
-        cache: new InMemoryCache()
     })
     const latestTokenPriceQuery = `
     query LatestPriceData($address: String!) {
@@ -70,8 +82,8 @@ export async function fetchAllBalances(
             ).then((v) => { symbolToPrice[symbol] = v })
         )
     })
-    let resolvedBalances = await Promise.all(balanceReqs)
-    const latestPrices = await Promise.all(valuedBalancePromises)
+    await Promise.all(balanceReqs)
+    await Promise.all(valuedBalancePromises)
     Object.keys(balances).forEach((tokenSymbol: string) => {
         if (balances[tokenSymbol] && symbolToPrice[tokenSymbol].data.tokenDayDatas.length > 0) {
             result.push({

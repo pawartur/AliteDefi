@@ -12,7 +12,6 @@ export default async function fetchCreamPositions(account: string, chainId: Numb
   const baseURL = chainIdToCreamDataURL[chainId]
   const positionData = await (await fetch(`${baseURL}&addresses=${account.toLowerCase()}`)).json()
 
-  console.log(positionData)
   // this seems to be a bit stale and probbly not reliable
   return positionData
 }

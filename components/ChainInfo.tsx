@@ -14,14 +14,8 @@ import {
   TokenBalance
 } from "../@types/types";
 import { fetchERC20Transactions } from "../data/fetchERC20Transactions";
-import { fetchNativeTokenBalance } from "../data/fetchNativeTokenBalance";
 import { buildPortfolio } from "../data/buildPortfolio";
-
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
-import { apolloClient } from "../pages";
 import { filterIncomingTransactions } from "../data/filterIncomingTransactions";
-import { figureOutRequiredHistoricData } from "../data/figureOutRequiredHistoricData";
 import { fetchAllBalances } from "../data/fetchAllBalances";
 import { filterOutgoingTransactions } from "../data/filterOutgoingTransactions";
 import { fetchTransactions } from "../data/fetchTransactions";
@@ -31,13 +25,6 @@ import fetchCreamPools from '../data/fetchCreamPools'
 import fetchCreamPositions from '../data/fetchCreamPositions'
 import CoinInfo from './CoinInfo'
 
-const ETH_PRICE_QUERY = gql`
-  query bundles {
-    bundles(where: { id: "1" }) {
-      ethPrice
-    }
-  }
-`
 const ChainInfo = () => {
   const connectionInfo = useContext(ConnectionContext);
   const [transactions, setTransactions] = useState<Transaction[]>([])
@@ -47,19 +34,10 @@ const ChainInfo = () => {
   const [aavePoolsData, setAaavePoolsData] = useState()
   const [creamPoolsData, setCreamPoolsData] = useState()
 
-  const { loading: ethLoading, data: ethPriceData } = useQuery(
-    ETH_PRICE_QUERY,
-    {
-      client: apolloClient,
-    })
-
-  const ethPriceInUSD = ethPriceData && ethPriceData.bundles[0].ethPrice
-
   const updateAllBalances = async () => {
     const fetchedBalances = await fetchAllBalances(
       connectionInfo.account || "", 
       connectionInfo.chainId,
-      ethPriceInUSD,
       erc20Transations,
       connectionInfo.library!
     )
@@ -101,7 +79,7 @@ const ChainInfo = () => {
 
   useEffect(() => {
     updateERC20Transactions()
-  }, [ethPriceInUSD])
+  }, [])
 
   useEffect(() => {
     updateTransactions()

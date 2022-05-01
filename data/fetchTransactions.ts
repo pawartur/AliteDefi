@@ -7,7 +7,6 @@ export async function fetchTransactions(
 ): Promise<Transaction[]> {
     const apiEndpoint = apiParams[chainId].apiURL
     const apiKey = apiParams[chainId].apiKey
-    console.log('apiEndpoint', apiEndpoint)
     const apiModule = 'account'
     const apiAction = 'txlist'
     const response = await fetch(`${apiEndpoint}?module=${apiModule}&action=${apiAction}&address=${account}&startblock=0&endblock=99999999&page=1&offset=100&sort=asc&apikey=${apiKey}`)
