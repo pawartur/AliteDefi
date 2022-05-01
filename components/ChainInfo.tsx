@@ -27,36 +27,28 @@ import CoinInfo from './CoinInfo'
 
 const ChainInfo = () => {
   const connectionInfo = useContext(ConnectionContext);
-  const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [erc20Transations, setERC20Transations] = useState<Transaction[]>([])
-  const [allTokenBalances, setAllTokenBalances] = useState<TokenBalance[]>([])
   const [portfolio, setPortfolio] = useState<Portfolio>()
   const [aavePoolsData, setAaavePoolsData] = useState()
   const [creamPoolsData, setCreamPoolsData] = useState()
 
-  const updateAllBalances = async () => {
-    const fetchedBalances = await fetchAllBalances(
+  const updatePortfolio = async () => {
+    const [
+      transactions,
+      erc20Transations
+    ] = await Promise.all([
+      fetchTransactions(connectionInfo.account || "", connectionInfo.chainId || 1),
+      fetchERC20Transactions(connectionInfo.account || "", connectionInfo.chainId || 1)
+    ])
+
+    let allTransactions = transactions
+    allTransactions.push(...erc20Transations)
+
+    const allTokenBalances = await fetchAllBalances(
       connectionInfo.account || "", 
-      connectionInfo.chainId,
+      connectionInfo.chainId || 1,
       erc20Transations,
       connectionInfo.library!
     )
-    setAllTokenBalances(fetchedBalances)
-  }
-
-  const updateERC20Transactions = async () => {
-    const fetchedTransactions = await fetchERC20Transactions(connectionInfo.account || "", connectionInfo.chainId)
-    setERC20Transations(fetchedTransactions)
-  }
-
-  const updateTransactions = async () => {
-    const fetchedTransactions = await fetchTransactions(connectionInfo.account || "", connectionInfo.chainId)
-    setTransactions(fetchedTransactions)
-  }
-
-  const updatePortfolio = async () => {
-    let allTransactions = transactions
-    allTransactions.push(...erc20Transations)
 
     const incomingTransactions = filterIncomingTransactions(
       new String(connectionInfo.account),
@@ -69,7 +61,7 @@ const ChainInfo = () => {
 
     const portfolio = await buildPortfolio(
       new String(connectionInfo.account),
-      connectionInfo.chainId,
+      connectionInfo.chainId || 1,
       allTokenBalances,
       incomingTransactions,
       outgoingTransactions
@@ -78,26 +70,16 @@ const ChainInfo = () => {
   }
 
   useEffect(() => {
-    updateERC20Transactions()
-  }, [])
-
-  useEffect(() => {
-    updateTransactions()
-  }, [erc20Transations])
-
-  useEffect(() => {
-    updateAllBalances()
-  }, [transactions])
-
-  useEffect(() => {
     updatePortfolio()
-  }, [allTokenBalances])
-
-  useEffect(() => {
     if (connectionInfo.chainId !== undefined) {
       const fetchThePools = async () => {
-        const aavePoolData = await fetchAavePools(connectionInfo.chainId)
-        const creamPoolData = await fetchCreamPools(connectionInfo.chainId)
+        const [
+          aavePoolData,
+          creamPoolData
+        ] = await Promise.all([
+          fetchAavePools(connectionInfo.chainId),
+          fetchCreamPools(connectionInfo.chainId)
+        ])
         setAaavePoolsData(aavePoolData)
         setCreamPoolsData(creamPoolData)
       }
@@ -113,7 +95,7 @@ const ChainInfo = () => {
     return (<div className="text-lg" key={i}> Lend {pool.tokenSymbol} yielding {Number(pool.apy).toFixed(3) *100}% APY</div>)
   });
 
-  const renderedBalances = allTokenBalances.map((balance, i) => {
+  const renderedBalances = portfolio?.allTokenBalances.map((balance, i) => {
     return (<CoinInfo key={i} {...balance}></CoinInfo>)
   })
 

@@ -83,6 +83,7 @@ export async function buildPortfolio(
     return {
         currency: Currency.usd,
         balance: Math.round(totalBalance * 100) / 100,
+        allTokenBalances: allTokenBalances,
         overallGainLoss: Math.round(overallGainLoss * 100) / 100,
         overallGainLossPercentage: Math.round(overallGainLossPercentage * 100) / 100
     }

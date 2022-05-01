@@ -3,7 +3,11 @@ import { formatReserves, ReserveDataWithPrice } from '@aave/math-utils';
 import dayjs from 'dayjs';
 import { chainIdToAaveSubgraph } from '../utils/networkParams';
 
-export default async function fetchAavePools(chainId: Number): Promise<any> {
+export default async function fetchAavePools(chainId: Number | undefined): Promise<any> {
+  if (chainId === undefined || chainIdToAaveSubgraph[chainId] === undefined) {
+    return [];
+  }
+
   const aaveClient = new ApolloClient({
     uri: chainIdToAaveSubgraph[chainId],
     cache: new InMemoryCache()

@@ -29,6 +29,7 @@ export type TokenBalance = {
 export type Portfolio = {
     currency: Currency;
     balance: number;
+    allTokenBalances: TokenBalance[];
     overallGainLoss: number;
     overallGainLossPercentage: number;
 }
