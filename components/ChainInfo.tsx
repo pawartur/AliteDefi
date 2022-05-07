@@ -31,13 +31,17 @@ const ChainInfo = () => {
   const [aavePoolsData, setAaavePoolsData] = useState()
   const [creamPoolsData, setCreamPoolsData] = useState()
 
-  const updatePortfolio = async () => {
+  const updateInfo = async () => {
     const [
       transactions,
-      erc20Transations
+      erc20Transations,
+      aavePoolData,
+      creamPoolData
     ] = await Promise.all([
       fetchTransactions(connectionInfo.account || "", connectionInfo.chainId || 1),
-      fetchERC20Transactions(connectionInfo.account || "", connectionInfo.chainId || 1)
+      fetchERC20Transactions(connectionInfo.account || "", connectionInfo.chainId || 1),
+      fetchAavePools(connectionInfo.chainId),
+      fetchCreamPools(connectionInfo.chainId)
     ])
 
     let allTransactions = transactions
@@ -67,25 +71,16 @@ const ChainInfo = () => {
       outgoingTransactions
     )
     setPortfolio(portfolio)
+    setAaavePoolsData(aavePoolData)
+    setCreamPoolsData(creamPoolData)
   }
 
   useEffect(() => {
-    updatePortfolio()
-    if (connectionInfo.chainId !== undefined) {
-      const fetchThePools = async () => {
-        const [
-          aavePoolData,
-          creamPoolData
-        ] = await Promise.all([
-          fetchAavePools(connectionInfo.chainId),
-          fetchCreamPools(connectionInfo.chainId)
-        ])
-        setAaavePoolsData(aavePoolData)
-        setCreamPoolsData(creamPoolData)
-      }
-      fetchThePools()
-    }
-  }, [connectionInfo.account, connectionInfo.chainId])
+    updateInfo()
+  }, [
+    connectionInfo.account, 
+    connectionInfo.chainId
+  ])
 
   const renderedAavePoolData = (aavePoolsData ?? []).map((pool, i) => {
     return (<div className="text-lg" key={i}> Lend {pool.symbol} yielding {Number(pool.supplyAPY).toFixed(3) * 100}% APY</div>)
