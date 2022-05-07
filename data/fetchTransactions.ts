@@ -1,15 +1,22 @@
 import { Transaction } from "../@types/types";
-import { apiParams } from "../utils/apiParams";
+import { TRANSACTIONS_API_PARAMS } from "../utils/apiParams";
 
 export async function fetchTransactions(
-    account: string, 
-    chainId: number
+    account: string | undefined, 
+    chainId: number | undefined
 ): Promise<Transaction[]> {
-    const apiEndpoint = apiParams[chainId].apiURL
-    const apiKey = apiParams[chainId].apiKey
+  if (
+    account !== undefined && 
+    chainId !== undefined &&
+    TRANSACTIONS_API_PARAMS[chainId] !== undefined
+  ) {
+    const apiEndpoint= TRANSACTIONS_API_PARAMS[chainId]?.apiUrl
+    const apiKey = TRANSACTIONS_API_PARAMS[chainId]?.apiKey
     const apiModule = 'account'
     const apiAction = 'txlist'
-    const response = await fetch(`${apiEndpoint}?module=${apiModule}&action=${apiAction}&address=${account}&startblock=0&endblock=99999999&page=1&offset=100&sort=asc&apikey=${apiKey}`)
+    const url = `
+    ${apiEndpoint}?module=${apiModule}&action=${apiAction}&address=${account}&startblock=0&endblock=99999999&page=1&offset=100&sort=asc&apikey=${apiKey}`
+    const response = await fetch(url)
     const data = await response.json()
     if (typeof(data.result) === 'string') {
         // TODO: Add error handling that makes sense
@@ -17,4 +24,7 @@ export async function fetchTransactions(
     }
     
     return data.result
+  } else {
+    return []
+  }
 }

@@ -2,13 +2,13 @@ import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
 import fetchAavePools from './fetchAavePools';
 import { formatUserSummary } from '@aave/math-utils';
 import dayjs from 'dayjs';
-import { chainIdToAaveSubgraph } from '../utils/networkParams';
+import { AAVE_SUBGRAPHS } from '../utils/apiParams';
 
-export default async function fetchAavePositions(account: string, chainId: Number): Promise<any> {
+export default async function fetchAavePositions(account: string, chainId: number): Promise<any> {
   // https://app.aave.com/markets/?marketName=proto_polygon
   // All queries against polygon V2
   const aaveClient = new ApolloClient({
-    uri: chainIdToAaveSubgraph[chainId],
+    uri: AAVE_SUBGRAPHS[chainId],
     cache: new InMemoryCache()
   })
 
@@ -41,7 +41,7 @@ export default async function fetchAavePositions(account: string, chainId: Numbe
     }
   })
 
-  const userReserves = userReservesData.data.userReserves.map(userReserve => {
+  const userReserves = userReservesData.data.userReserves.map((userReserve: any) => {
     return {
       ...userReserve,
       underlyingAsset: userReserve.reserve.underlyingAsset,

@@ -5,21 +5,21 @@ import { ethers } from "ethers"
 import Web3Modal from "web3modal"
 import { providerOptions } from "../utils/providerOptions"
 import { toHex } from '../utils/toHex'
-import { networkParams } from '../utils/networkParams'
+import { ADDITIONAL_CHAINS } from '../utils/apiParams'
 import ConnectionContext from '../utils/ConnectionContext'
 import ChainInfo from '../components/ChainInfo'
 
 const Home: NextPage = () => {
-  const [provider, setProvider] = useState()
+  const [_provider, setProvider] = useState()
   const [library, setLibrary] = useState<ethers.providers.Web3Provider>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [account, setAccount] = useState<string>()
-  const [signature, setSignature] = useState("")
-  const [error, setError] = useState("")
-  const [chainId, setChainId] = useState<Number>()
-  const [network, setNetwork] = useState<Number>()
-  const [message, setMessage] = useState("")
-  const [verified, setVerified] = useState()
+  const [_signature, setSignature] = useState("")
+  const [_error, setError] = useState("")
+  const [chainId, setChainId] = useState<number>()
+  const [network, setNetwork] = useState<number>()
+  const [_message, setMessage] = useState("")
+  const [_verified, setVerified] = useState()
 
   const connectWallet = useCallback(async () => {
     try {
@@ -55,7 +55,7 @@ const Home: NextPage = () => {
         try {
           await library.provider.request({
             method: "wallet_addEthereumChain",
-            params: [networkParams[toHex(network)]]
+            params: [ADDITIONAL_CHAINS[toHex(network)]]
           });
         } catch (error) {
           setError(error as string);
