@@ -8,75 +8,38 @@ React,
 
 import ConnectionContext from "../utils/ConnectionContext";
 import {
-  Transaction,
-  Portfolio,
-  Currency,
-  TokenBalance
+  ChainInfoModel,
+  LiquidityProtocol,
 } from "../@types/types";
 import { fetchERC20Transactions } from "../data/fetchERC20Transactions";
-import { fetchNativeTokenBalance } from "../data/fetchNativeTokenBalance";
 import { buildPortfolio } from "../data/buildPortfolio";
-
-import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
-import { apolloClient } from "../pages";
 import { filterIncomingTransactions } from "../data/filterIncomingTransactions";
-import { figureOutRequiredHistoricData } from "../data/figureOutRequiredHistoricData";
 import { fetchAllBalances } from "../data/fetchAllBalances";
 import { filterOutgoingTransactions } from "../data/filterOutgoingTransactions";
 import { fetchTransactions } from "../data/fetchTransactions";
 import fetchAavePools from '../data/fetchAavePools'
-import fetchAavePositions from '../data/fetchAavePositions'
 import fetchCreamPools from '../data/fetchCreamPools'
-import fetchCreamPositions from '../data/fetchCreamPositions'
 import CoinInfo from './CoinInfo'
+import { buildLiquidityPoolsFromAaveData, buildLiquidityPoolsFromCreamData } from "../data/buildLiquidityPools";
+import { fetchTransactionValuesInUSD } from "../data/fetchTransactionValuesInUSD";
 
-const ETH_PRICE_QUERY = gql`
-  query bundles {
-    bundles(where: { id: "1" }) {
-      ethPrice
-    }
-  }
-`
 const ChainInfo = () => {
   const connectionInfo = useContext(ConnectionContext);
-  const [transactions, setTransactions] = useState<Transaction[]>([])
-  const [erc20Transations, setERC20Transations] = useState<Transaction[]>([])
-  const [allTokenBalances, setAllTokenBalances] = useState<TokenBalance[]>([])
-  const [portfolio, setPortfolio] = useState<Portfolio>()
-  const [aavePoolsData, setAaavePoolsData] = useState()
-  const [creamPoolsData, setCreamPoolsData] = useState()
+  const [model, setModel] = useState<ChainInfoModel>()
 
-  const { loading: ethLoading, data: ethPriceData } = useQuery(
-    ETH_PRICE_QUERY,
-    {
-      client: apolloClient,
-    })
-
-  const ethPriceInUSD = ethPriceData && ethPriceData.bundles[0].ethPrice
-
-  const updateAllBalances = async () => {
-    const fetchedBalances = await fetchAllBalances(
-      connectionInfo.account || "", 
-      connectionInfo.chainId,
-      ethPriceInUSD,
+  const updateModel = async () => {
+    const [
+      transactions,
       erc20Transations,
-      connectionInfo.library!
-    )
-    setAllTokenBalances(fetchedBalances)
-  }
+      aavePoolData,
+      creamPoolData
+    ] = await Promise.all([
+      fetchTransactions(connectionInfo.account, connectionInfo.chainId),
+      fetchERC20Transactions(connectionInfo.account, connectionInfo.chainId),
+      fetchAavePools(connectionInfo.chainId),
+      fetchCreamPools(connectionInfo.chainId)
+    ])
 
-  const updateERC20Transactions = async () => {
-    const fetchedTransactions = await fetchERC20Transactions(connectionInfo.account || "", connectionInfo.chainId)
-    setERC20Transations(fetchedTransactions)
-  }
-
-  const updateTransactions = async () => {
-    const fetchedTransactions = await fetchTransactions(connectionInfo.account || "", connectionInfo.chainId)
-    setTransactions(fetchedTransactions)
-  }
-
-  const updatePortfolio = async () => {
     let allTransactions = transactions
     allTransactions.push(...erc20Transations)
 
@@ -89,64 +52,68 @@ const ChainInfo = () => {
       allTransactions
     )
 
-    const portfolio = await buildPortfolio(
-      new String(connectionInfo.account),
-      connectionInfo.chainId,
-      allTokenBalances,
-      incomingTransactions,
-      outgoingTransactions
-    )
-    setPortfolio(portfolio)
+    const [
+      balances,
+      incomingTransactionValuesInUSD,
+      outgoingTransactionValuesInUSD,
+    ] = await Promise.all([
+      fetchAllBalances(
+        connectionInfo.account, 
+        connectionInfo.chainId, 
+        erc20Transations, 
+        connectionInfo.library
+      ),
+      fetchTransactionValuesInUSD(
+        connectionInfo.chainId, 
+        incomingTransactions
+      ),
+      fetchTransactionValuesInUSD(
+        connectionInfo.chainId, 
+        outgoingTransactions
+      ),
+    ])
+
+    setModel({
+      portfolio: buildPortfolio(
+        connectionInfo.chainId,
+        balances,
+        incomingTransactionValuesInUSD,
+        outgoingTransactionValuesInUSD
+      ),
+      liquidityPools: {
+        [LiquidityProtocol.Aave]: buildLiquidityPoolsFromAaveData(aavePoolData),
+        [LiquidityProtocol.Cream]: buildLiquidityPoolsFromCreamData(creamPoolData)
+      }
+    })
   }
 
   useEffect(() => {
-    updateERC20Transactions()
-  }, [ethPriceInUSD])
+    updateModel()
+  }, [
+    connectionInfo.account, 
+    connectionInfo.chainId
+  ])
 
-  useEffect(() => {
-    updateTransactions()
-  }, [erc20Transations])
-
-  useEffect(() => {
-    updateAllBalances()
-  }, [transactions])
-
-  useEffect(() => {
-    updatePortfolio()
-  }, [allTokenBalances])
-
-  useEffect(() => {
-    if (connectionInfo.chainId !== undefined) {
-      const fetchThePools = async () => {
-        const aavePoolData = await fetchAavePools(connectionInfo.chainId)
-        const creamPoolData = await fetchCreamPools(connectionInfo.chainId)
-        setAaavePoolsData(aavePoolData)
-        setCreamPoolsData(creamPoolData)
-      }
-      fetchThePools()
-    }
-  }, [connectionInfo.account, connectionInfo.chainId])
-
-  const renderedAavePoolData = (aavePoolsData ?? []).map((pool, i) => {
-    return (<div className="text-lg" key={i}> Lend {pool.symbol} yielding {Number(pool.supplyAPY).toFixed(3) * 100}% APY</div>)
+  const renderedAavePoolData = (model?.liquidityPools[LiquidityProtocol.Aave] ?? []).map((pool, i) => {
+    return (<div className="text-lg" key={i}> Lend {pool.tokenSymbol} yielding {Number(pool.supplyAPY * 100).toFixed(3)}% APY</div>)
   });
 
-  const renderedCreamPoolData = (creamPoolsData ?? []).map((pool, i) => {
-    return (<div className="text-lg" key={i}> Lend {pool.tokenSymbol} yielding {Number(pool.apy).toFixed(3) *100}% APY</div>)
+  const renderedCreamPoolData = (model?.liquidityPools[LiquidityProtocol.Cream] ?? []).map((pool, i) => {
+    return (<div className="text-lg" key={i}> Lend {pool.tokenSymbol} yielding {Number(pool.supplyAPY * 100).toFixed(3)}% APY</div>)
   });
 
-  const renderedBalances = allTokenBalances.map((balance, i) => {
+  const renderedBalances = model?.portfolio?.allTokenBalances.map((balance, i) => {
     return (<CoinInfo key={i} {...balance}></CoinInfo>)
   })
 
   const renderPortfolio = () => {
     return (
       <div className="portfolio pb-0 font-actor text-3xl font-semibold space-x-4">
-        <div className="currency text-xs">Currency: {portfolio?.currency}</div>
+        <div className="currency text-xs">Currency: {model?.portfolio?.currency}</div>
         <div className="flex items-center justify-between pt-6">
-          <div className="balance">Current balance: ${portfolio?.balance}</div>
-          <div className="gainLoss text-lg">Profit/loss: ${portfolio?.overallGainLoss}</div>
-          <div className="gainLossPercentage text-lg">Profit/loss: {portfolio?.overallGainLossPercentage}%</div>
+          <div className="balance">Current balance: ${model?.portfolio?.balance}</div>
+          <div className="gainLoss text-lg">Profit/loss: ${model?.portfolio?.overallGainLoss}</div>
+          <div className="gainLossPercentage text-lg">Profit/loss: {model?.portfolio?.overallGainLossPercentage}%</div>
         </div>
         <div className="justify-between space-x-2 p-6 font-dmsans md:flex">
           <div className="ml-2 w-full space-y-2 md:ml-0 md:w-1/3">

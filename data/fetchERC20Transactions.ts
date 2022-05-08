@@ -1,13 +1,17 @@
 import { Transaction } from "../@types/types";
-import { apiParams } from "../utils/apiParams";
+import { TRANSACTIONS_API_PARAMS } from "../utils/apiParams";
 
 export async function fetchERC20Transactions(
-    account: string, 
-    chainId: number
+    account: string | undefined, 
+    chainId: number | undefined
 ): Promise<Transaction[]> {
-    const apiEndpoint = apiParams[chainId].apiURL
-    const apiKey = apiParams[chainId].apiKey
-    console.log('apiEndpoint', apiEndpoint)
+  if (
+    account !== undefined && 
+    chainId !== undefined && 
+    TRANSACTIONS_API_PARAMS[chainId] !== undefined
+  ) {
+    const apiEndpoint= TRANSACTIONS_API_PARAMS[chainId]?.apiUrl
+    const apiKey = TRANSACTIONS_API_PARAMS[chainId]?.apiKey
     const apiModule = 'account'
     const apiAction = 'tokentx'
     const response = await fetch(`${apiEndpoint}?module=${apiModule}&action=${apiAction}&address=${account}&startblock=0&endblock=99999999&page=1&offset=100&sort=asc&apikey=${apiKey}`)
@@ -16,6 +20,9 @@ export async function fetchERC20Transactions(
         // TODO: Add error handling that makes sense
         return []
     }
-    
     return data.result
+  } else {
+    return []
+  }
+
 }

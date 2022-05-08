@@ -1,40 +1,27 @@
 import type { NextPage } from 'next'
 import React, { useEffect, useState, useCallback } from "react";
 import Head from 'next/head'
-import styles from '../styles/Home.module.css'
 import { ethers } from "ethers"
 import Web3Modal from "web3modal"
 import { providerOptions } from "../utils/providerOptions"
 import { toHex } from '../utils/toHex'
-import { networkParams } from '../utils/networkParams'
+import { ADDITIONAL_CHAINS } from '../utils/apiParams'
 import ConnectionContext from '../utils/ConnectionContext'
-import { ApolloProvider } from 'react-apollo'
 import ChainInfo from '../components/ChainInfo'
-import { ApolloClient } from 'apollo-client'
-import { InMemoryCache } from 'apollo-cache-inmemory'
-import { HttpLink } from 'apollo-link-http'
-
-export const apolloClient = new ApolloClient({
-  link: new HttpLink({
-    uri: process.env.NEXT_PUBLIC_UNISWAP_API_ENDPOINT,
-  }),
-  cache: new InMemoryCache(),
-})
 
 const Home: NextPage = () => {
-  const [provider, setProvider] = useState()
+  const [_provider, setProvider] = useState()
   const [library, setLibrary] = useState<ethers.providers.Web3Provider>()
   const [web3Modal, setWeb3Modal] = useState<Web3Modal>()
   const [account, setAccount] = useState<string>()
-  const [signature, setSignature] = useState("")
-  const [error, setError] = useState("")
-  const [chainId, setChainId] = useState<Number>()
-  const [network, setNetwork] = useState<Number>()
-  const [message, setMessage] = useState("")
-  const [verified, setVerified] = useState()
+  const [_signature, setSignature] = useState("")
+  const [_error, setError] = useState("")
+  const [chainId, setChainId] = useState<number>()
+  const [network, setNetwork] = useState<number>()
+  const [_message, setMessage] = useState("")
+  const [_verified, setVerified] = useState()
 
   const connectWallet = useCallback(async () => {
-    console.log("connectWallet")
     try {
       if (web3Modal) {
         const provider = await web3Modal.connect()
@@ -68,7 +55,7 @@ const Home: NextPage = () => {
         try {
           await library.provider.request({
             method: "wallet_addEthereumChain",
-            params: [networkParams[toHex(network)]]
+            params: [ADDITIONAL_CHAINS[toHex(network)]]
           });
         } catch (error) {
           setError(error as string);
@@ -183,11 +170,9 @@ const Home: NextPage = () => {
                 </div>
               </div>
 
-              <ApolloProvider client={apolloClient}>
-                <ConnectionContext.Provider value={{ account: account, chainId: chainId, library: library }}>
-                  <ChainInfo />
-                </ConnectionContext.Provider>
-              </ApolloProvider>
+              <ConnectionContext.Provider value={{ account: account, chainId: chainId, library: library }}>
+                <ChainInfo />
+              </ConnectionContext.Provider>
               </div>
           )}
       </main>

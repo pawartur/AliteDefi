@@ -6,7 +6,6 @@ export async function fetchERC20BalanceOf(
     provider: ethers.providers.Web3Provider,
     smartContractAddress: string
 ) : Promise<number> {
-    console.log('smartContractAddress', smartContractAddress)
     const contract = new ethers.Contract(smartContractAddress, erc20abiJson, provider);
     const bigBalance = await contract.balanceOf(account);
     return Number(bigBalance.toBigInt())

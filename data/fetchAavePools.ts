@@ -1,11 +1,15 @@
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
 import { formatReserves, ReserveDataWithPrice } from '@aave/math-utils';
 import dayjs from 'dayjs';
-import { chainIdToAaveSubgraph } from '../utils/networkParams';
+import { AAVE_SUBGRAPHS } from '../utils/apiParams';
 
-export default async function fetchAavePools(chainId: Number): Promise<any> {
+export default async function fetchAavePools(chainId: number | undefined): Promise<any> {
+  if (chainId === undefined || AAVE_SUBGRAPHS[chainId] === undefined) {
+    return [];
+  }
+
   const aaveClient = new ApolloClient({
-    uri: chainIdToAaveSubgraph[chainId],
+    uri: AAVE_SUBGRAPHS[chainId],
     cache: new InMemoryCache()
   })
 
@@ -62,7 +66,7 @@ export default async function fetchAavePools(chainId: Number): Promise<any> {
   [priceData, poolData] = await Promise.all([priceQuery, poolQuery])
 
 
-  const reserves = poolData.data.reserves.map(reserve => {
+  const reserves = poolData.data.reserves.map((reserve: any) => {
     return {
       ...reserve,
       priceInMarketReferenceCurrency: reserve.price.priceInEth,
