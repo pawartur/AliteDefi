@@ -5,10 +5,10 @@ import {
 import gql from "graphql-tag";
 import { UNISWAP_SUBGRAPHS } from "../utils/apiParams";
 
-export async function fetchTransactionValuesInUSD(
+export async function fetchERC20TransactionValuesInUSD(
   chainId: number | undefined, 
   transactions: Transaction[]
-): Promise<number[]> {
+): Promise<{[transactionHash: string]: number}> {
   if (chainId !== undefined) {
     const uniswapClient = new ApolloClient({
       uri: UNISWAP_SUBGRAPHS[chainId],
@@ -27,7 +27,7 @@ export async function fetchTransactionValuesInUSD(
         }
       }
     `
-    let results: number[] = []
+    let results: {[transactionHash: string]: number} = {}
     const incomingValueQueries = transactions.map((transaction) => {
       return uniswapClient.query({
         query: gql(transactionTokenPriceQuery),
@@ -38,17 +38,12 @@ export async function fetchTransactionValuesInUSD(
       }).then((queryResult) => {
         const tokenDecimal = transaction.tokenDecimal || 18
         const price = queryResult.data.tokenDayDatas[0]?.priceUSD || 0
-        console.log('queryResult', queryResult)
-        console.log('transaction.value', transaction.value)
-        console.log('price', price)
-        console.log('tokenDecimal', tokenDecimal)
-        console.log('value in usd', tokenDecimal)
-        results.push((transaction.value * price) / Math.pow(10, tokenDecimal))
+        results[transaction.blockHash] = (transaction.value * price) / Math.pow(10, tokenDecimal)
       });
     });
     await Promise.all(incomingValueQueries)
     return results
   } else {
-    return []
+    return {}
   }
 }

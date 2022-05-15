@@ -19,6 +19,12 @@ export const TRANSACTIONS_API_PARAMS: EtherscanApiParams = {
   }
 }
 
+export const CHAIN_ID_TO_COINGECKO_COIN_ID = {
+  [Blockchain.EthereumMainnet]: "ethereum",
+  [Blockchain.EthereumKovan]: "ethereum",
+  [Blockchain.PolygonMainnet]: "matic-network",
+}
+
 export const AAVE_SUBGRAPHS: ApiUrlsPerChain = {
   [Blockchain.EthereumMainnet]: 'https://api.thegraph.com/subgraphs/name/aave/protocol-v2',
   [Blockchain.EthereumKovan]: 'https://api.thegraph.com/subgraphs/name/aave/protocol-v2-kovan',

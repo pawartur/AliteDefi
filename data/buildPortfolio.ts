@@ -7,7 +7,6 @@ import {
 
 import { ApolloClient, InMemoryCache, gql } from '@apollo/client'
 import { UNISWAP_SUBGRAPHS } from "../utils/apiParams";
-import { fetchTransactionValuesInUSD } from "./fetchTransactionValuesInUSD";
 
 export function buildPortfolio(
   chainId: number | undefined, 
@@ -25,7 +24,6 @@ export function buildPortfolio(
         totalBalance += (Number(tokenBalance.amount) / Math.pow(10, tokenBalance.decimal)) * tokenBalance.priceInUSD
     })
 
-    console.log('incomingTransactionValuesAtTheTimeOfTransaction', incomingTransactionValuesInUSD)
     const totalIncomingValueInUSD = incomingTransactionValuesInUSD.reduce((acc, n) => {
         return acc + n;
     }, 0)
@@ -34,9 +32,6 @@ export function buildPortfolio(
         return acc + n;
     }, 0)
 
-    // FIXME: totalIncomingValueInUSD is clearly wrong
-    console.log('totalIncomingValueInUSD', totalIncomingValueInUSD)
-    console.log('totalOutgoingValueInUSD', totalOutgoingValueInUSD)
     const overallGainLoss = totalBalance - totalIncomingValueInUSD + totalOutgoingValueInUSD
     const overallGainLossPercentage = (overallGainLoss / totalBalance) * 100
 
