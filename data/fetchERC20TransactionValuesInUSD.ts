@@ -14,7 +14,6 @@ export async function fetchERC20TransactionValuesInUSD(
       uri: UNISWAP_SUBGRAPHS[chainId],
       cache: new InMemoryCache()
     })
-    // FIXME: It seems that this query returns empty results for native tokens (at least it returns empty results for my eth transactions on ethereum)
     const transactionTokenPriceQuery = `
       query TransactionPriceData($address: String!, $timestamp: Int!) {
         tokenDayDatas(where: {token: $address, date_lte: $timestamp}, orderBy: date, orderDirection: desc, first:1) {
