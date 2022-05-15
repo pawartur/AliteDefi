@@ -14,6 +14,7 @@ export type EtherscanApiParams = {
 }
 
 export type Transaction = {
+  blockHash: string;
   timeStamp: number;
   transactionIndex: number;
   from: string;

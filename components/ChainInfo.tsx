@@ -13,15 +13,16 @@ import {
 } from "../@types/types";
 import { fetchERC20Transactions } from "../data/fetchERC20Transactions";
 import { buildPortfolio } from "../data/buildPortfolio";
-import { filterIncomingTransactions } from "../data/filterIncomingTransactions";
 import { fetchAllBalances } from "../data/fetchAllBalances";
-import { filterOutgoingTransactions } from "../data/filterOutgoingTransactions";
 import { fetchTransactions } from "../data/fetchTransactions";
 import fetchAavePools from '../data/fetchAavePools'
 import fetchCreamPools from '../data/fetchCreamPools'
 import CoinInfo from './CoinInfo'
 import { buildLiquidityPoolsFromAaveData, buildLiquidityPoolsFromCreamData } from "../data/buildLiquidityPools";
-import { fetchTransactionValuesInUSD } from "../data/fetchTransactionValuesInUSD";
+import { fetchERC20TransactionValuesInUSD } from "../data/fetchERC20TransactionValuesInUSD";
+import { fetchNativeTransactionValuesInUSD } from "../data/fetchNativeTransactionValuesInUSD";
+import { filterIncomingTransactionValuesInUSD } from "../data/filterIncomingTransactionValuesInUSD";
+import { filterOutgoingTransactionValuesInUSD } from "../data/filterOutgoingTransactionValuesInUSD";
 
 const ChainInfo = () => {
   const connectionInfo = useContext(ConnectionContext);
@@ -40,22 +41,10 @@ const ChainInfo = () => {
       fetchCreamPools(connectionInfo.chainId)
     ])
 
-    let allTransactions = transactions
-    allTransactions.push(...erc20Transations)
-
-    const incomingTransactions = filterIncomingTransactions(
-      new String(connectionInfo.account),
-      allTransactions
-    )
-    const outgoingTransactions = filterOutgoingTransactions(
-      new String(connectionInfo.account),
-      allTransactions
-    )
-
     const [
       balances,
-      incomingTransactionValuesInUSD,
-      outgoingTransactionValuesInUSD,
+      transactionValuesInUSD,
+      erc20TransactionValuesinUSD
     ] = await Promise.all([
       fetchAllBalances(
         connectionInfo.account, 
@@ -63,15 +52,31 @@ const ChainInfo = () => {
         erc20Transations, 
         connectionInfo.library
       ),
-      fetchTransactionValuesInUSD(
-        connectionInfo.chainId, 
-        incomingTransactions
+      fetchNativeTransactionValuesInUSD(
+        connectionInfo.chainId,
+        transactions
       ),
-      fetchTransactionValuesInUSD(
+      fetchERC20TransactionValuesInUSD(
         connectionInfo.chainId, 
-        outgoingTransactions
+        erc20Transations
       ),
     ])
+
+    let mergedTransactions = transactions
+    mergedTransactions = mergedTransactions.concat(erc20Transations)
+    const mergedTransactionValues = {...transactionValuesInUSD, ...erc20TransactionValuesinUSD}
+
+    const incomingTransactionValuesInUSD = filterIncomingTransactionValuesInUSD(
+      connectionInfo.account,
+      mergedTransactions,
+      mergedTransactionValues
+    )
+
+    const outgoingTransactionValuesInUSD = filterOutgoingTransactionValuesInUSD(
+      connectionInfo.account,
+      mergedTransactions,
+      mergedTransactionValues
+    )
 
     setModel({
       portfolio: buildPortfolio(
